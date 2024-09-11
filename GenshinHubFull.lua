@@ -36,7 +36,7 @@ No Skidder Or You Will Be Banned!!!!
     Library:OrionLib Remake
     Support Executor:Fluxus,Delta,CodeX,VegaX,ArceusX,SynapseZ,Electron,KiwiX V2/V3;...
     Kid Skidder Lolll I Obf You Can't Skidd
-    You Want Free SouceCode? Go To https://github.com/LongHip2012/FreeSouceCode- To Free Script
+    You Want Free SouceCode? Go To https://github.com/LongHip2012/FreeSouceCode- To Free Souce Code
 
 ]]
 
