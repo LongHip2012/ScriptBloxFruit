@@ -1,5 +1,7 @@
+getgenv().AutoLoadScript = true
 getgenv().Hide_UI = false
 getgenv().BlackScreen = false
+getgenv().AutoRejoin = true
 _G.HopFruit1M = true
 _G.KaitunConfig = {
     ["Actions Allowed"] = {
