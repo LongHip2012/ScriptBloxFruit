@@ -1,0 +1,58 @@
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+getgenv().TargetUnitRoll = {
+    "Admiral Of Lava"
+}
+
+getgenv().notRollUnitTarget = false
+getgenv().UseSavePosition = {
+    ["Enabled"] = false,
+    ["File Name"] = ""
+}
+getgenv().GemRollUnit = 2500
+getgenv().Speed = {
+    ["Speed"] = 1,
+    ["Wave Active Speed"] = 1,
+}
+getgenv()["Black Screen"] = false
+getgenv()["Auto Leave Infinite"] = {
+    ["Auto Leave"] = false,
+    ["Method"] = {
+        ["Sell"] = true,
+        ["Leave"] = false,
+    },
+    ["Wave"] = 31
+}
+getgenv().Auto_Equip = {
+    ["Equip Best"] = true,
+    ["Custom Equip"] = {
+        ["Enabled"] = false,
+        ["Units"] = {
+            "Chief Of Lava",
+        },
+    },
+}
+getgenv().Portal = {
+    ["Enabled"] = false, 
+    ["Name Portal"] = "Demon Portal", -- support only 4 portal lunar and Demon and Ancient Dragon and Cursed Kingdom
+    ["Auto Get Portal"] = false, ---- support only portal Ancient Dragon and Cursed Kingdom
+    ["Rarity Portal"] = {
+        ["Rare"] = true,
+        ["Epic"] = true,
+        ["Legendary"] = false,
+        ["Mythical"] = false,
+        ["Secret"] = false,
+    },
+    ["Unit"] = {
+        ["Use All Unit"] = true,
+        ["Custom Unit"] = {
+            "Admiral Of Lava",
+        }
+    },
+}
+getgenv().Webhook =  {
+    ["Webhook"] = false,
+    ["Url"] = "",
+    ["Roll Unit"] = true,
+    ["Story/Infinite"] = true,
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/obiiyeuem/vthangsitink/main/BananaCat-KaitunAD.lua"))()
