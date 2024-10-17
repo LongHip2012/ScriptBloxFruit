@@ -164,7 +164,7 @@ local ThunderImageUI = Instance.new("ImageLabel")
         ThunderImageUI.BorderSizePixel = 0
         ThunderImageUI.Position = UDim2.new(0.0, 0, 0.0, 0)
         ThunderImageUI.Size = UDim2.new(0, 50, 0, 50)
-        ThunderImageUI.Image = "http://www.roblox.com/asset/?id=16194056633"
+        ThunderImageUI.Image = "http://www.roblox.com/asset/?id=116732189500359"
 
 _G.Logo = 16194056633
 _G.Logo1 = 16194056633
