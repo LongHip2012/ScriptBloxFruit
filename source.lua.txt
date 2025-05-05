@@ -1,0 +1,5076 @@
+
+local executorName
+if identifyexecutor then
+    executorName=identifyexecutor()
+elseif getexecutorname then
+    executorName=getexecutorname()
+end
+local npcLock = false
+local toggleLoop
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+local esp = (function()
+	local ESP_ENABLED = false
+
+	local function createESP(player)
+		local character = player.Character
+		if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+		if not character:FindFirstChild("Highlight") then
+			local highlight = Instance.new("Highlight", character)
+			highlight.Name = "Highlight"
+			highlight.FillTransparency = 0.5
+			highlight.OutlineTransparency = 0
+		end
+
+		local tag = character:FindFirstChild("ESPTag")
+		if not tag and character:FindFirstChild("Head") then
+			local gui = Instance.new("BillboardGui", character.Head)
+			gui.Name = "ESPTag"
+			gui.Size = UDim2.new(0, 200, 0, 50)
+			gui.StudsOffset = Vector3.new(0, 3, 0)
+			gui.AlwaysOnTop = true
+
+			local label = Instance.new("TextLabel", gui)
+			label.Size = UDim2.new(1, 0, 1, 0)
+			label.BackgroundTransparency = 1
+			label.TextStrokeTransparency = 0.5
+			label.TextScaled = false
+			label.Font = Enum.Font.SourceSansBold
+			label.TextColor3 = Color3.new(1, 1, 1)
+			label.TextSize = 8
+		end
+	end
+
+	local function updateESP()
+		if not ESP_ENABLED then return end
+		for _, player in ipairs(game.Players:GetPlayers()) do
+			if player ~= game.Players.LocalPlayer then
+				local char = player.Character
+				if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+					local sameTeam = player.Team == game.Players.LocalPlayer.Team
+					local highlight = char:FindFirstChild("Highlight")
+					if highlight then
+						highlight.FillColor = sameTeam and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+					end
+
+					local tag = char:FindFirstChild("ESPTag")
+					if tag then
+						local text = tag:FindFirstChildWhichIsA("TextLabel")
+						if text then
+							local distance = math.floor((char.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude)
+							text.Text = string.format("%s | %d HP | %d studs", player.Name, math.floor(char.Humanoid.Health), distance)
+						end
+					else
+						createESP(player)
+					end
+				end
+			end
+		end
+	end
+
+	-- Loop cập nhật ESP liên tục nếu bật
+	task.spawn(function()
+		while true do
+			if ESP_ENABLED then
+				updateESP()
+			end
+			task.wait(0.5)
+		end
+	end)
+
+	-- Khởi tạo ESP khi nhân vật xuất hiện
+	game.Players.PlayerAdded:Connect(function(player)
+		player.CharacterAdded:Connect(function()
+			task.wait(1)
+			if ESP_ENABLED then
+				createESP(player)
+			end
+		end)
+	end)
+
+	-- ESP Toggle interface
+	return {
+		ToggleESP = function(value)
+			ESP_ENABLED = value
+		end
+	}
+end)()
+
+-- Check Exec
+
+local executor = getexecutorname() or identifyexecutor()
+
+if executor then
+    local supportedExecutors = {
+        "Velocity", "Wave", "Arceus", "Swift", "AWP", "Macsploit", "Delta", "Fluxus", "CodeX", 
+        "Krnl", "Trigon", "Evon", "Cryptic", "SynapeX", "Potassium", "Argon", "Xeno", "Nezur", 
+        "Revelix", "Cubix", "Solara", "Dynamic", "Nebula", "Ronix", "Atlantis", "JJsploit", 
+        "Frostware"
+    }
+
+    local isExecutorSupported = false
+    for _, name in ipairs(supportedExecutors) do
+        if string.find(executor, name) then
+            isExecutorSupported = true
+            break
+        end
+    end
+
+    if isExecutorSupported then
+        print("Supported Executor!")
+    else
+        game.Players.LocalPlayer:Kick("Not supported TNG Skid executor!")
+    end
+end
+
+-- Key
+
+repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+
+local keys = {
+    ["long08092012"] = true,
+    ["Nguyenhoanglong@08092012"] = true,
+    ["skibidi"] = true,
+    ["rDgZFssRIuFdInErEStWEVNZkylpRprt"] = true
+}
+
+if getgenv().Key and keys[getgenv().Key] then
+
+print("Whitelist success!")
+wait(.5)
+game.StarterGui:SetCore("SendNotification", {
+     Title = "Lonely Hub";
+     Text = "Loading";
+     Icon = "";
+     Duration = "2";
+})
+
+wait(.1)
+
+local antiVoidActive = false -- Keeps track of whether Anti-Void is active
+local antiVoidConnection -- Stores the connection for the loop
+local TeleportService = game:GetService("TeleportService")
+local PlaceId = game.PlaceId
+local JobId = ""
+local function startAntiVoid()
+    antiVoidConnection = game:GetService("RunService").Stepped:Connect(function()
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local rootPart = player.Character.HumanoidRootPart
+            if rootPart.Position.Y < -1 then -- Check if the player is below y = -1
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua'))() -- Teleport to train
+            end
+        end
+    end)
+end
+
+local function stopAntiVoid()
+    if antiVoidConnection then
+        antiVoidConnection:Disconnect() -- Stop monitoring position
+        antiVoidConnection = nil
+    end
+end
+----------------------------------------ToogleUi----------------------------------------
+local LonelyHubBtn = Instance.new("ScreenGui")
+local dutdit = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local ImageLabel = Instance.new("ImageLabel")
+local TextButton = Instance.new("TextButton")
+
+LonelyHubBtn.Name = "Lonely Hub Btn"
+LonelyHubBtn.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+LonelyHubBtn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+dutdit.Name = "dut dit"
+dutdit.Parent = LonelyHubBtn
+dutdit.AnchorPoint = Vector2.new(0.1, 0.1)
+dutdit.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+dutdit.Position = UDim2.new(0, 20, 0.1, -6)
+dutdit.Size = UDim2.new(0, 50, 0, 50)
+
+UICorner.CornerRadius = UDim.new(1, 0)
+UICorner.Parent = dutdit
+
+ImageLabel.Parent = dutdit
+ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+ImageLabel.BackgroundTransparency = 1.0
+ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+ImageLabel.Size = UDim2.new(0, 40, 0, 40)
+ImageLabel.Image = "rbxassetid://112485471724320"
+
+TextButton.Parent = dutdit
+TextButton.BackgroundTransparency = 1.0
+TextButton.Size = UDim2.new(1, 0, 1, 0)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = ""
+TextButton.TextColor3 = Color3.fromRGB(27, 42, 53)
+
+local TweenService = game:GetService("TweenService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local zoomedIn = false
+local originalSize = UDim2.new(0, 40, 0, 40)
+local zoomedSize = UDim2.new(0, 30, 0, 30)
+local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+local faded = false
+local fadeInTween = TweenService:Create(dutdit, tweenInfo, {BackgroundTransparency = 0.25})
+local fadeOutTween = TweenService:Create(dutdit, tweenInfo, {BackgroundTransparency = 0})
+
+TextButton.MouseButton1Down:Connect(function()
+	if zoomedIn then
+		TweenService:Create(ImageLabel, tweenInfo, {Size = originalSize}):Play()
+	else
+		TweenService:Create(ImageLabel, tweenInfo, {Size = zoomedSize}):Play()
+	end
+	zoomedIn = not zoomedIn
+
+	if faded then
+		fadeOutTween:Play()
+	else
+		fadeInTween:Play()
+	end
+	faded = not faded
+
+	VirtualInputManager:SendKeyEvent(true, "LeftControl", false, game)
+end)
+
+print("Loading Main Ui")
+wait(.1)
+game.StarterGui:SetCore("SendNotification", {
+     Title = "Lonely Hub";
+     Text = "Loading Main Ui";
+     Icon = "";
+     Duration = "2";
+})
+wait(.1)
+
+----------------------------------------Fluent----------------------------------------
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Lonely Hub-Universal [Premium]",
+    SubTitle = "by LongHip",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(500, 350),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+----------------------------------------Tab----------------------------------------
+local Tabs = {
+    Client = Window:AddTab({ Title = "Tab Client", Icon = "" }),
+    Dev = Window:AddTab({ Title = "Tab Developer", Icon = "" }),
+    LP = Window:AddTab({ Title = "Tab Local Player", Icon = "" }),
+    BF = Window:AddTab({ Title = "Tab Blox Fruit Script", Icon = "" }),
+    Chest = Window:AddTab({ Title = "Tab Farm Chest \n Blox Fruit Script", Icon = "" }),
+    HOP = Window:AddTab({ Title = "Tab HOP Server \n Blox Fruit Script", Icon = "" }),
+    Kaitun = Window:AddTab({ Title = "Tab Kaitun \n Blox Fruit Script", Icon = "" }),
+    Fruit = Window:AddTab({ Title = "Tab Find Fruit \n Blox Fruit Script", Icon = "" }),
+    Bounty = Window:AddTab({ Title = "Tab Auto Bounty \n Blox Fruit Script", Icon = "" }),
+    Door = Window:AddTab({ Title = "Tab Doors Script", Icon = "" }),
+    Bladeball = Window:AddTab({ Title = "Tab Bladeball Script", Icon = "" }),
+    Fisch = Window:AddTab({ Title = "Tab Fisch Script", Icon = "" }),
+    Blr = Window:AddTab({ Title = "Tab Bluelock Script", Icon = "" }),
+    Shrimp = Window:AddTab({ Title = "Tab Shrimp Game\n Script", Icon = "" }),
+    Deadrail = Window:AddTab({ Title = "Tab Dead Rail Script", Icon = "" }),
+    Ac = Window:AddTab({ Title = "Tab Arise Crossover \n Script", Icon = "" }),
+    Ad = Window:AddTab({ Title = "Tab Anime Defender \n Script", Icon = "" }),
+    Titan = Window:AddTab({ Title = "TabAttack On \n Titan Revolution Script", Icon = "" }),
+    Grow = Window:AddTab({ Title = "Tab Grow A Garden\n Script", Icon = "" }),
+    MM2 = Window:AddTab({ Title = "Tab Murder Mystery\n 2 Script", Icon = "" }),
+    Bed = Window:AddTab({ Title = "Tab Bedwars Script", Icon = "" }),
+    Arsenal = Window:AddTab({ Title = "Tab Arsenal Script", Icon = "" }),
+    Rivals = Window:AddTab({ Title = "Tab Rivals Script", Icon = "" }),
+    Evade = Window:AddTab({ Title = "Tab Evade Script", Icon = "" }),
+    Jail = Window:AddTab({ Title = "Tab Jailbreak \nScript", Icon = "" }),
+    Uni = Window:AddTab({ Title = "Tab Universal \nScript", Icon = "" }),
+    ScriptHub = Window:AddTab({ Title = "Tab Script Hub", Icon = "" }),
+    SP = Window:AddTab({ Title = "Tab Paid Script", Icon = "" }),
+    If = Window:AddTab({ Title = "Tab Info", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Tab Settings", Icon = "" }),
+}
+----------------------------------------Client----------------------------------------
+print("Client Tab Loading")
+wait(1)
+
+    Tabs.Client:AddButton({
+        Title = "SynapseX",
+        Description = "Can Run Script But Use Your Executor's Api",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LongHip2012/ScriptBloxFruit/refs/heads/main/SynapsexUi.lua"))()
+        end
+    })
+    
+    Tabs.Client:AddButton({
+        Title = "ArceusX",
+        Description = "Can Run Script But Use Your Executor's Api",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/chillz-workshop/main/Arceus%20X%20V3"))()
+        end
+    })
+    
+    Tabs.Client:AddButton({
+        Title = "KRNL",
+        Description = "Can Run Script But Use Your Executor's Api",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LongHip2012/Lonely-Hub/refs/heads/main/KRNL%20UI%20Remake.lua.txt"))()
+        end
+    })
+    
+----------------------------------------Dev----------------------------------------
+print("Dev Tab Loading")
+wait(1)
+
+Tabs.Dev:AddButton({
+        Title = "Infinite Yield",
+        Description = "Command",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+        end
+    })
+    
+Tabs.Dev:AddButton({
+        Title = "Dark Dex",
+        Description = "Show Game File",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+        end
+    })
+    
+Tabs.Dev:AddButton({
+        Title = "Simple Spy",
+        Description = "Help u create own script or other",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+        end
+    })
+----------------------------------------LP----------------------------------------
+print("Loading Local Player Tab")
+wait(1)
+
+Tabs.LP:AddButton(
+    {
+        Title = "Infinite Jump",
+        Description = "Working 100%",
+        Callback = function()
+            local InfiniteJumpEnabled = true
+            game:GetService("UserInputService").JumpRequest:connect(
+                function()
+                    if InfiniteJumpEnabled then
+                        game:GetService "Players".LocalPlayer.Character:FindFirstChildOfClass "Humanoid":ChangeState(
+                            "Jumping"
+                        )
+                    end
+                end
+            )
+        end
+    }
+)
+
+Tabs.LP:AddButton({
+        Title = "Anti Afk",
+        Description = "Anti Afk/Idle",
+        Callback = function()
+            local VirtualUser = game:GetService('VirtualUser')
+ 
+game:GetService('Players').LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+        end
+    })
+
+local noclipConnection -- To store the active loop for noclip
+
+-- Function to enable noclip
+local function enableNoclip()
+    if noclipConnection then return end -- Prevent multiple connections
+    noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+        if player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false -- Disable collisions
+                end
+            end
+        end
+    end)
+end
+
+-- Function to disable noclip
+local function disableNoclip()
+    if noclipConnection then
+        noclipConnection:Disconnect() -- Stop the loop
+        noclipConnection = nil
+    end
+    if player.Character then
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true -- Enable collisions
+            end
+        end
+    end
+end
+
+Tabs.LP:AddButton({
+        Title = "Enable Noclip",
+        Description = "Working",  
+        Callback = function()
+            enableNoclip()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Disable Noclip",
+        Description = "Working",  
+        Callback = function()
+            disableNoclip()
+        end
+    })
+
+Tabs.LP:AddButton({
+        Title = "No FOG",
+        Description = "delete fog",  
+        Callback = function()
+            local function removeFog()
+    local lighting = game:GetService("Lighting")
+    lighting.FogEnd = 1e10
+    lighting.FogStart = 1e10
+    lighting.FogColor = Color3.new(1, 1, 1)
+end
+
+removeFog()
+
+        end
+    })
+
+
+Tabs.LP:AddButton({
+        Title = "Full Bright",
+        Description = "",  
+        Callback = function()
+            game:GetService("Lighting"):GetPropertyChangedSignal("FogEnd"):Connect(removeFog)
+game:GetService("Lighting"):GetPropertyChangedSignal("FogStart"):Connect(removeFog)
+game:GetService("Lighting"):GetPropertyChangedSignal("FogColor"):Connect(removeFog)
+
+game:GetService("Lighting").Changed:Connect(removeFog)
+
+local Light = game:GetService("Lighting")
+
+function dofullbright()
+Light.Ambient = Color3.new(1, 1, 1)
+Light.ColorShift_Bottom = Color3.new(1, 1, 1)
+Light.ColorShift_Top = Color3.new(1, 1, 1)
+end
+
+dofullbright()
+
+Light.LightingChanged:Connect(dofullbright)
+
+        end
+    })
+
+Tabs.LP:AddButton({
+        Title = "AntiLag 90%",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/TurboLite/Script/main/FixLag.lua"))()
+        end
+    })
+    
+    local ESPModule = require(game:GetService("ReplicatedStorage"):WaitForChild("ESPModule"))
+
+local Toggle = Tabs.LP:AddToggle("MyToggle", {
+    Title = "ESP",
+    Default = false
+})
+
+Toggle:OnChanged(function()
+    local isEnabled = Options.MyToggle.Value
+    ESPModule.ToggleESP(isEnabled)
+end)
+
+local function getClosestNPC()
+    local closestNPC = nil
+    local closestDistance = math.huge
+    for _, object in ipairs(workspace:GetDescendants()) do
+        if object:IsA("Model") then
+            local humanoid = object:FindFirstChild("Humanoid") or object:FindFirstChildWhichIsA("Humanoid")
+            local hrp = object:FindFirstChild("HumanoidRootPart") or object.PrimaryPart
+            if humanoid and hrp and humanoid.Health > 0 and object.Name ~= "Horse" then
+                local isPlayer = false
+                for _, pl in ipairs(Players:GetPlayers()) do
+                    if pl.Character == object then
+                        isPlayer = true
+                        break
+                    end
+                end
+                if not isPlayer then
+                    local distance = (hrp.Position - player.Character.HumanoidRootPart.Position).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestNPC = object
+                    end
+                end
+            end
+        end
+    end
+    return closestNPC
+end
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+local function getClosestNPC()
+    local closestNPC = nil
+    local closestDistance = math.huge
+
+    for _, object in ipairs(workspace:GetDescendants()) do
+        if object:IsA("Model") then
+            local humanoid = object:FindFirstChild("Humanoid") or object:FindFirstChildWhichIsA("Humanoid")
+            local hrp = object:FindFirstChild("HumanoidRootPart") or object.PrimaryPart
+            if humanoid and hrp and humanoid.Health > 0 and object.Name ~= "Horse" then
+                local isPlayer = false
+                for _, pl in ipairs(Players:GetPlayers()) do
+                    if pl.Character == object then
+                        isPlayer = true
+                        break
+                    end
+                end
+                if not isPlayer then
+                    local distance = (hrp.Position - player.Character.HumanoidRootPart.Position).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestNPC = object
+                    end
+                end
+            end
+        end
+    end
+
+    return closestNPC
+end
+
+local Toggle = Tabs.LP:AddToggle("NPCLockToggle", {
+    Title = "NPC Lock (Dead Rail)",
+    Default = false
+})
+
+Toggle:OnChanged(function()
+    local isEnabled = Options.NPCLockToggle.Value
+    npcLock = isEnabled
+
+    if npcLock then
+        toggleLoop = RunService.RenderStepped:Connect(function()
+            local npc = getClosestNPC()
+            if npc and npc:FindFirstChild("Humanoid") then
+                camera.CameraSubject = npc:FindFirstChild("Humanoid")
+            else
+                camera.CameraSubject = player.Character and player.Character:FindFirstChild("Humanoid")
+            end
+        end)
+    else
+        if toggleLoop then
+            toggleLoop:Disconnect()
+            toggleLoop = nil
+        end
+        camera.CameraSubject = player.Character and player.Character:FindFirstChild("Humanoid")
+    end
+end)
+
+local Toggle = Tabs.LP:AddToggle("Toggle", {Title = "Auto Set Spawn \n Point Blox Fruit", Default = _G.Set })
+local lastSetState = false
+Toggle:OnChanged(function(Value)
+    _G.Set = Value
+    if Value ~= lastSetState then
+        lastSetState = Value
+        if Value then
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
+            end)
+        end
+    end
+end)
+Toggle = Tabs.Settings:AddToggle("Toggle", {Title = "Anti AFK", Default = _G.AntiAFK })
+Toggle:OnChanged(function(Value)
+    _G.AntiAFK = Value 
+end)
+task.spawn(function()
+    while true do
+        if _G.AntiAFK then
+            local vu = game:GetService("VirtualUser")
+            local player = game:GetService("Players").LocalPlayer
+            player.Idled:Connect(function()
+                vu:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+                wait(1)
+                vu:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+            end)
+        end
+        game:GetService("RunService").Heartbeat:wait()
+    end
+end)
+Toggle = Tabs.LP:AddToggle("Toggle", {Title = "Auto Turn On Buso", Default = _G.AUTOHAKI })
+Toggle:OnChanged(function(Value)
+    _G.AUTOHAKI = Value
+end)
+spawn(function()
+    local canUseHaki = true
+    local debounceTime = 2
+    while task.wait(0.1) do
+        if _G.AUTOHAKI then
+            if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") and canUseHaki then
+                canUseHaki = false
+                local args = {
+                    [1] = "Buso"
+                }
+                pcall(function()
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                end)
+                wait(debounceTime)
+                canUseHaki = true
+            end
+        end
+    end
+end)
+Toggle = Tabs.LP:AddToggle("Toggle", {Title = "Auto Turn On Race V3", Default = _G.AutoTurnOnV3 })
+Toggle:OnChanged(function(Value)
+    _G.AutoTurnOnV3 = Value
+end)
+task.spawn(function()
+    local prevState = false    
+    while true do
+        task.wait(0.1)        
+        pcall(function()
+            if _G.AutoTurnOnV3 ~= prevState then
+                if _G.AutoTurnOnV3 then
+                    game:GetService("ReplicatedStorage").Remotes.CommE:FireServer("ActivateAbility")
+                end
+                prevState = _G.AutoTurnOnV3
+            end
+        end)
+    end
+end)
+
+Toggle = Tabs.LP:AddToggle("Toggle", { Title = "Auto Turn On Race V4", Default = _G.AutoTurnOnV4 })
+Toggle:OnChanged(function(Value)
+    _G.AutoTurnOnV4 = Value
+end)
+task.spawn(function()
+    local lastCheckTime = 0
+    while true do
+        task.wait(0.1)
+        if _G.AutoTurnOnV4 then
+            local currentTime = tick()
+            if currentTime - lastCheckTime >= 0.5 then
+                lastCheckTime = currentTime
+                local character = game.Players.LocalPlayer.Character
+                if character and character:FindFirstChild("RaceEnergy") and
+                   character.RaceEnergy.Value >= 1 and
+                   not character.RaceTransformed.Value then
+                    local be = game:GetService("VirtualInputManager")
+                    be:SendKeyEvent(true, "Y", false, game)
+                    task.wait(0.1)
+                    be:SendKeyEvent(false, "Y", false, game)
+                end
+            end
+        end
+    end
+end)
+
+Toggle = Tabs.LP:AddToggle("Toggle", {Title = "Auto Turn On Buso", Default = _G.AUTOHAKI })
+Toggle:OnChanged(function(Value)
+    _G.AUTOHAKI = Value
+end)
+spawn(function()
+    local canUseHaki = true
+    local debounceTime = 2
+    while task.wait(0.1) do
+        if _G.AUTOHAKI then
+            if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") and canUseHaki then
+                canUseHaki = false
+                local args = {
+                    [1] = "Buso"
+                }
+                pcall(function()
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                end)
+                wait(debounceTime)
+                canUseHaki = true
+            end
+        end
+    end
+end)
+
+StatusBone = Tabs.LP:AddParagraph({
+    Title = "Bone",
+    Content = ""
+})
+spawn(function()
+    while wait(1) do
+        StatusBone:SetDesc("You Have: " .. tostring(game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones", "Check")) .. " Bones")
+    end
+end)
+
+code = {
+    "WildDares",
+    "BossBuild",
+    "GetPranked",
+    "Sub2OfficialNoobie",
+    "Sub2Daigrock",
+    "Sub2NoobMaster123",
+    "Bluxxy",
+    "JCWK",
+    "Enyu_is_Pro",
+    "Sub2Fer999",
+    "kittgaming",
+    "TheGreatAce",
+    "StrawHatMaine",
+    "TantaiGaming",
+    "Axiore",
+    "SUB2GAMERROBOT_EXP1",
+    "MagicBus",
+    "StarcodeHEO",
+    "Sub2CaptainMaui",
+    "FIGHT4FRUIT",
+    "EARN_FRUITS",
+}
+
+Tabs.Shop:AddButton({
+    Title = "Redeem Code",
+    Callback = function()
+        function RedeemCode(Value)
+            game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(Value)
+        end
+        local delayBetweenRequests = 0.5
+        for i, v in pairs(code) do
+            spawn(function()
+                RedeemCode(v)
+                wait(delayBetweenRequests)
+            end)
+        end
+    end
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CommF_Remote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Teleport Old World",
+    Callback = function()
+        local success, result = pcall(function()
+            return CommF_Remote:InvokeServer("TravelMain")
+        end)
+        if not success then
+        end
+    end
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CommF_Remote = Remotes:WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Teleport New World",
+    Callback = function()
+        local success, result = pcall(function()
+            return CommF_Remote:InvokeServer("TravelDressrosa")
+        end)
+        if not success then            
+        end
+    end
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CommF_Remote = Remotes:WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Teleport Third Sea",
+    Callback = function()
+        local success, result = pcall(function()
+            return CommF_Remote:InvokeServer("TravelZou")
+        end)
+        if not success then
+        end
+    end
+})
+
+Tabs.Shop:AddParagraph({
+    Title = "Fighting Shop",
+    Content = string.rep("-", 21)
+}) 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CommF_Remote = Remotes:WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Black Leg",
+    Callback = function()
+        local success, result = pcall(function()
+            return CommF_Remote:InvokeServer("BuyBlackLeg")
+        end)
+        if not success then            
+        end
+    end
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CommF_Remote = Remotes:WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Fishman Karate",
+    Callback = function()
+        local success, result = pcall(function()
+            return CommF_Remote:InvokeServer("BuyFishmanKarate")
+        end)
+        if not success then            
+        end
+    end
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CommF_Remote = Remotes:WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Electro",
+    Callback = function()
+        local success, result = pcall(function()
+            return CommF_Remote:InvokeServer("BuyElectro")
+        end)
+        if not success then            
+        end
+    end
+})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local CommF_Remote = Remotes:WaitForChild("CommF_")
+Tabs.Shop:AddButton({
+    Title = "Dragon Breath",
+    Callback = function()
+        local success1, result1 = pcall(function()
+            return CommF_Remote:InvokeServer("BlackbeardReward", "DragonClaw", "1")
+        end)
+        if not success1 then
+            return
+        end
+        local success2, result2 = pcall(function()
+            return CommF_Remote:InvokeServer("BlackbeardReward", "DragonClaw", "2")
+        end)
+        if not success2 then
+            return
+        end
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "SuperHuman",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuySuperhuman")
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "Death Step",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuyDeathStep")
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "Sharkman Karate",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuySharkmanKarate", true)
+        wait(0.2)
+        CommF_:InvokeServer("BuySharkmanKarate")
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "Electric Claw",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuyElectricClaw")
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "Dragon Talon",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuyDragonTalon")
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "God Human",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuyGodhuman")
+    end
+})
+Tabs.Shop:AddButton({
+    Title = "Sanguine Art",
+    Callback = function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local CommF_ = ReplicatedStorage.Remotes.CommF_
+        CommF_:InvokeServer("BuySanguineArt", true)
+        wait(0.2)
+        CommF_:InvokeServer("BuySanguineArt")
+    end
+})
+Tabs.Shop:AddParagraph({
+    Title = "Abilities Shop",
+    Content = string.rep("-", 21)
+})
+Tabs.Shop:AddButton({
+	Title = "Skyjump [ $10,000 Beli ]",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyHaki","Geppo")
+	end
+})
+Tabs.Shop:AddButton({
+	Title = "Buso Haki [ $25,000 Beli ]",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyHaki","Buso")
+	end
+})
+Tabs.Shop:AddButton({
+	Title = "Observation haki [ $750,000 Beli ]",
+	Callback = function()
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("KenTalk","Buy")
+	end
+})
+Tabs.Shop:AddButton({
+	Title = "Soru [ $100,000 Beli ]",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyHaki","Soru")
+	end
+})
+Tabs.Shop:AddParagraph({
+    Title = "Misc Shop",
+    Content = string.rep("-", 21)
+}) 
+Tabs.Shop:AddButton({
+     Title = "Buy Refund Stat (2500F)",
+     Callback = function()            
+         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Refund","1")
+         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Refund","2")
+     end
+})
+Tabs.Shop:AddButton({
+     Title = "Buy Reroll Race (3000F)",
+     Callback = function()            
+         game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Reroll","1")
+	     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BlackbeardReward","Reroll","2")
+     end
+})
+Tabs.Shop:AddButton({
+    Title = "Buy Ghoul Race",
+    Callback = function()
+        local args1 = {[1] = "Ectoplasm", [2] = "BuyCheck", [3] = 4}
+        local args2 = {[1] = "Ectoplasm", [2] = "Change", [3] = 4}
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args1))        
+        wait(0.5)
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args2))
+    end
+})
+Tabs.LP:AddButton({
+    Title = "Buy Cyborg Race (2500F)",
+    Callback = function()
+        if not isBuying then
+            isBuying = true
+            local args = {[1] = "CyborgTrainer", [2] = "Buy"}
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))                        
+            wait(0.5)
+            isBuying = false
+        end
+    end
+})
+local autofarm = false
+
+local Toggle = Tabs.Main:AddToggle("AutoChest", {
+    Title = "Farm chest Bypass",
+    Default = false
+})
+
+Toggle:OnChanged(function()
+    local state = Options.AutoFarmToggle.Value
+    if state then
+        task.spawn(function()
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local hrp = character:WaitForChild("HumanoidRootPart")
+
+            local chestFolder = workspace:WaitForChild("ChestModels")
+            local chestNames = {"GoldChest", "DiamondChest", "SilverChest"}
+
+            local function getAllChests()
+                local chests = {}
+                for _, chest in pairs(chestFolder:GetChildren()) do
+                    for _, name in ipairs(chestNames) do
+                        if chest.Name == name then
+                            local part = chest.PrimaryPart or chest:FindFirstChildWhichIsA("BasePart")
+                            if part then
+                                table.insert(chests, part)
+                            end
+                        end
+                    end
+                end
+                return chests
+            end
+
+            while Options.AutoFarmToggle.Value do
+                local chests = getAllChests()
+                for _, chest in ipairs(chests) do
+                    if not Options.AutoFarmToggle.Value then break end
+                    if chest and chest:IsDescendantOf(workspace) then
+                        hrp.CFrame = chest.CFrame + Vector3.new(0, 5, 0)
+                        task.wait(1.2)
+                    end
+                end
+                task.wait(0.5)
+            end
+        end)
+    end
+end)
+
+
+Tabs.LP:AddButton({
+        Title = "Tp To Train",
+        Description = "Dead Rail",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/train.github.io/refs/heads/main/train.lua'))()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Tp To Sterling",
+        Description = "Dead Rail",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/sterlingnotifcation.github.io/refs/heads/main/Sterling.lua'))()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Tp To Tesla Lab",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua'))()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Tp To Castle",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/castletpfast.github.io/refs/heads/main/FASTCASTLE.lua"))()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Tp To Fort",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tpfort.github.io/refs/heads/main/Tpfort.lua"))()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Tp To End",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/hbjrev/tpend.github.io/refs/heads/main/ringta.lua"))()
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Tp To Bank",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Tptobank.github.io/refs/heads/main/Banktp.lua"))()
+        end
+    })
+    
+    local gunKillAuraActive = false 
+    
+    Tabs.LP:AddButton({
+        Title = "Gun Kill Aura",
+        Description = "",
+        Callback = function()
+            gunKillAuraActive = not gunKillAuraActive -- Toggle the active state
+
+    if gunKillAuraActive then
+        GunKillAuraButton.Text = "Gun Aura (Kill Mobs): ON"
+        GunKillAuraButton.BackgroundColor3 = Color3.fromRGB(50, 205, 50) -- Green for ON state
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/Aimbot.github.io/refs/heads/main/Kill.lua"))()
+    else
+        GunKillAuraButton.Text = "Gun Aura (Kill Mobs): OFF"
+        GunKillAuraButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Gray for OFF state
+    end
+        end
+    })
+    
+    Tabs.LP:AddButton({
+        Title = "Anti Void",
+        Description = "",
+        Callback = function()
+            antiVoidActive = not antiVoidActive -- Toggle the active state
+
+    if antiVoidActive then
+        startAntiVoid() -- Start monitoring position
+    else
+        stopAntiVoid() -- Stop monitoring position
+    end
+        end
+    })
+----------------------------------------Server----------------------------------------
+local Time = Tabs.Status:AddParagraph({
+    Title="Real Time",
+    Content=""
+})
+local function UpdateLocalTime()
+    local date = os.date("*t")
+    local hour = date.hour % 24
+    local ampm = hour<12 and "AM" or "PM"
+    local formattedTime = string.format("%02i:%02i:%02i %s", ((hour-1) % 12)+1, date.min, date.sec, ampm)
+    local formattedDate = string.format("%02d/%02d/%04d", date.day, date.month, date.year)
+    local LocalizationService = game:GetService("LocalizationService")
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local name = player.Name
+    local regionCode = "Unknown"
+    local success, code=pcall(function()
+        return LocalizationService:GetCountryRegionForPlayerAsync(player)
+    end)
+    if success then
+        regionCode=code
+    end
+    Time:SetDesc(formattedDate .. "-" .. formattedTime .. " [ " .. regionCode .. " ]")
+end
+spawn(function()
+    while true do
+        UpdateLocalTime()
+        game:GetService("RunService").RenderStepped:Wait()
+    end
+end)
+local ServerTime = Tabs.Status:AddParagraph({
+    Title="Server Time",
+    Content=""
+})
+local function UpdateServerTime()
+    local GameTime = math.floor(workspace.DistributedGameTime+0.5)
+    local Hour = math.floor(GameTime/(60^2)) % 24
+    local Minute = math.floor(GameTime/60) % 60
+    local Second = GameTime % 60
+    ServerTime:SetDesc(string.format("%02d Tiếng-%02d Phút-%02d Giây", Hour, Minute, Second))
+end
+spawn(function()
+    while task.wait() do
+        pcall(UpdateServerTime)
+    end
+end)
+local Input = Tabs.Status:AddInput("Input", {
+        Title="JobID",
+        Default="",
+        Placeholder="",
+        Numeric=false, 
+        Finished=false, 
+        Callback=function(Value)
+            _G.Job=Value
+        end
+    })
+    Tabs.Status:AddButton({
+        Title="Join JobID",
+        Description="",
+        Callback=function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.placeId,_G.Job, game.Players.LocalPlayer)
+        end
+    })
+    Tabs.Status:AddButton({
+        Title="Copy JobID",
+        Description="",
+        Callback=function()
+            setclipboard(tostring(game.JobId))
+        end
+    })
+    local Toggle = Tabs.Status:AddToggle("MyToggle", {Title="Spam Tham Gia Job ID", Default=false })
+    Toggle:OnChanged(function(Value)
+  _G.Join=Value
+        end)
+        spawn(function()
+while wait() do
+if _G.Join then
+game:GetService("TeleportService"):TeleportToPlaceInstance(game.placeId,_G.Job, game.Players.LocalPlayer)
+end
+end
+end)
+Tabs.Status:AddButton({
+    Title="Rejoin",
+    Description="",
+    Callback=function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
+    end
+})
+Tabs.Status:AddButton({
+    Title="Server HOP",
+    Description="",
+    Callback=function()
+        Hop()
+    end
+})
+function Hop()
+    local PlaceID = game.PlaceId
+    local AllIDs = {}
+    local foundAnything = ""
+    local actualHour = os.date("!*t").hour
+    local Deleted = false
+    function TPReturner()
+        local Site;
+        if foundAnything=="" then
+            Site=game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+        else
+            Site=game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+        end
+        local ID = ""
+        if Site.nextPageCursor and Site.nextPageCursor ~="null" and Site.nextPageCursor ~=nil then
+            foundAnything=Site.nextPageCursor
+        end
+        local num = 0;
+        for i,v in pairs(Site.data) do
+            local Possible = true
+            ID=tostring(v.id)
+            if tonumber(v.maxPlayers)>tonumber(v.playing) then
+                for _,Existing in pairs(AllIDs) do
+                    if num ~=0 then
+                        if ID==tostring(Existing) then
+                            Possible=false
+                        end
+                    else
+                        if tonumber(actualHour) ~=tonumber(Existing) then
+                            local delFile = pcall(function()
+                                AllIDs={}
+                                table.insert(AllIDs, actualHour)
+                            end)
+                        end
+                    end
+                    num=num+1
+                end
+                if Possible==true then
+                    table.insert(AllIDs, ID)
+                    wait()
+                    pcall(function()
+                        wait()
+                        game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+                    end)
+                    wait()
+                end
+            end
+        end
+    end
+    function Teleport() 
+        while wait() do
+            pcall(function()
+                TPReturner()
+                if foundAnything ~="" then
+                    TPReturner()
+                end
+            end)
+        end
+    end
+    Teleport()
+end
+
+LegendarySword = Tabs.Server:AddParagraph({
+    Title = "Legendary Sword",
+    Content = "Status: "
+})
+spawn(function()
+    local previousStatus = ""
+    while wait(1) do
+        local swordStatus = "Not Found Legend Swords"
+        if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LegendarySwordDealer", "1") then
+            swordStatus = "Shisui"
+        elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LegendarySwordDealer", "2") then
+            swordStatus = "Wando"
+        elseif game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LegendarySwordDealer", "3") then
+            swordStatus = "Saddi"
+        end
+        LegendarySword:SetDesc(swordStatus)
+    end
+end)
+
+nd)
+FM = Tabs.Server:AddParagraph({
+    Title = "Full Moon Check",
+    Content = ""
+})
+task.spawn(function()
+    while task.wait(1) do
+        local moonTextureId = game:GetService("Lighting").Sky.MoonTextureId
+        local moonStatus = "Moon: 0/5"
+        if moonTextureId == "http://www.roblox.com/asset/?id=9709149431" then
+            moonStatus = "Moon: 5/5"
+        elseif moonTextureId == "http://www.roblox.com/asset/?id=9709149052" then
+            moonStatus = "Moon: 4/5"
+        elseif moonTextureId == "http://www.roblox.com/asset/?id=9709143733" then
+            moonStatus = "Moon: 3/5"
+        elseif moonTextureId == "http://www.roblox.com/asset/?id=9709150401" then
+            moonStatus = "Moon: 2/5"
+        elseif moonTextureId == "http://www.roblox.com/asset/?id=9709149680" then
+            moonStatus = "Moon: 1/5"
+        end
+        FM:SetDesc(moonStatus)
+    end
+end)
+
+EliteHunter = Tabs.Server:AddParagraph({
+    Title = "Elite Hunter",
+    Content = "Status: "
+})
+spawn(function()
+    local previousStatus = ""
+    while wait(1) do
+        local currentStatus = (game:GetService("ReplicatedStorage"):FindFirstChild("Diablo") or game:GetService("ReplicatedStorage"):FindFirstChild("Deandre") or game:GetService("ReplicatedStorage"):FindFirstChild("Urban") or game:GetService("Workspace").Enemies:FindFirstChild("Diablo") or game:GetService("Workspace").Enemies:FindFirstChild("Deandre") or game:GetService("Workspace").Enemies:FindFirstChild("Urban")) and '✅️' or '❌️'
+        local progress = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress")
+        if currentStatus ~= previousStatus then
+            EliteHunter:SetDesc("Status: " .. currentStatus .. " | Killed: " .. progress)
+            previousStatus = currentStatus
+        end
+    end
+end)
+
+CheckDoughKing = Tabs.Server:AddParagraph({
+    Title = "Dough King",
+    Content = "Status: "
+})
+spawn(function()
+    local previousStatus = ""
+    while wait(1) do
+        local currentStatus = game:GetService("ReplicatedStorage"):FindFirstChild("Dough King") or game:GetService("Workspace").Enemies:FindFirstChild("Dough King") and '✅️' or '❌️'
+        if currentStatus ~= previousStatus then
+            CheckDoughKing:SetDesc("Status: " .. currentStatus)
+            previousStatus = currentStatus
+        end
+    end
+end)
+
+CheckRip = Tabs.Server:AddParagraph({
+    Title = "Rip_Indra",
+    Content = "Status: "
+})
+spawn(function()
+    local previousStatus = ""
+    while wait(1) do
+        local currentStatus = game:GetService("ReplicatedStorage"):FindFirstChild("rip_indra True Form") or game:GetService("Workspace").Enemies:FindFirstChild("rip_indra") and '✅️' or '❌️'
+        if currentStatus ~= previousStatus then
+            CheckRip:SetDesc("Status: " .. currentStatus)
+            previousStatus = currentStatus
+        end
+    end
+end)
+
+MobCakePrince = Tabs.Server:AddParagraph({
+    Title = "Dimension Killed",
+    Content = ""
+})
+spawn(function()
+    while wait(1) do
+        local cakePrince = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")
+        local killStatus = "Cake Prince: ✅️"
+        if string.len(cakePrince) >= 86 then
+            local killCount = string.sub(cakePrince, 39, 41)
+            killStatus = "Kill: " .. killCount
+        end
+        MobCakePrince:SetDesc(killStatus)
+    end
+end)
+
+FrozenIsland = Tabs.Server:AddParagraph({
+    Title = "Frozen Dimension",
+    Content = "Status: "
+})
+spawn(function()
+    local previousStatus = ""
+    while wait(1) do
+        local currentStatus = game.Workspace._WorldOrigin.Locations:FindFirstChild('Frozen Dimension') and '✅️' or '❌️'
+        if currentStatus ~= previousStatus then
+            FrozenIsland:SetDesc('Status: ' .. currentStatus)
+            previousStatus = currentStatus
+        end
+    end
+end)
+
+Miragecheck = Tabs.Server:AddParagraph({
+    Title = "Mirage Island",
+    Content = "Status: "
+
+})
+local previousStatus = ""
+spawn(function()
+    pcall(function()
+        while true do
+            wait(1)            
+            local mirageIslandExists = game.Workspace._WorldOrigin.Locations:FindFirstChild('Mirage Island') ~= nil
+            local currentStatus = mirageIslandExists and '✅️' or '❌️'
+            if currentStatus ~= previousStatus then
+                Miragecheck:SetDesc('Status: ' .. currentStatus)
+                previousStatus = currentStatus
+            end
+        end
+    end)
+end)
+Kitsunecheck = Tabs.Server:AddParagraph({
+    Title = "Kitsune Island",
+    Content = "Status: "
+})
+spawn(function()
+    local previousStatus = ""
+    while task.wait(1) do
+        local currentStatus = game:GetService("Workspace").Map:FindFirstChild("KitsuneIsland") and '✅️' or '❌️'
+        if currentStatus ~= previousStatus then
+            Kitsunecheck:SetDesc('Status: ' .. currentStatus)
+            previousStatus = currentStatus
+        end
+    end
+end)
+CPrehistoriccheck = Tabs.Server:AddParagraph({
+    Title = "Prehistoric Island",
+    Desc = "Status: "
+})
+task.spawn(function()
+    local previousStatus = ""
+    while task.wait(1) do
+        local currentStatus = game.Workspace._WorldOrigin.Locations:FindFirstChild("Prehistoric Island") and '✅️' or '❌️'
+        if currentStatus ~= previousStatus then
+            CPrehistoriccheck:SetDesc("Status: " .. currentStatus)
+            previousStatus = currentStatus
+        end
+    end
+end)
+
+----------------------------------------BF----------------------------------------
+wait(1)
+print("Loading BF Script")
+wait(.1)
+
+wait(5)
+Tabs.BF:AddButton({
+        Title = "Redz Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/newredz/BloxFruits/refs/heads/main/Source.luau"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Rain Fruit",
+        Description = "But Old Fruit",  
+        Callback = function()
+            for i, v in pairs(game:GetObjects("rbxassetid://14759368201")[1]:GetChildren()) do
+    v.Parent = game.Workspace.Map
+    v:MoveTo(game.Players.LocalPlayer.Character.PrimaryPart.Position + Vector3.new(math.random(-50, 50), 100, math.random(-50, 50)))
+    if v.Fruit:FindFirstChild("AnimationController") then
+        v.Fruit:FindFirstChild("AnimationController"):LoadAnimation(v.Fruit:FindFirstChild("Idle")):Play()
+    end
+    v.Handle.Touched:Connect(function(otherPart)
+        if otherPart.Parent == game.Players.LocalPlayer.Character then
+            v.Parent = game.Players.LocalPlayer.Backpack
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end)
+end
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Vexze Hub V2",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Dex-Bear/Vxezehub/refs/heads/main/VxezeHubMain"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Cutchim Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://github.com/diemquy/CutTayHub/blob/main/Cuttayhubreal.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Muxus Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/MuxusTL/BloxFruits/main/MuxusHub.lua"))()
+        end
+    })
+    
+    Tabs.Kaitun:AddButton({
+    Title="Kaitun hub",
+    Description="",
+    Callback=function()
+	  _G.KaitunConfig = {
+
+    ["Start Farm"] = true,
+
+    ["Auto Fruit"] = true,
+
+    ["RedeemCode Level"] = 2,
+
+    ["white screen"] = false,
+
+    ["Ui Screen"] = false,
+
+    ["LimitFragment"] = 100000,
+
+    ["Buy Base Sword"] = true,
+
+    ["Boss List"] = {
+
+        "The Saw [Lv. 100] [Boss]",
+
+        "Greybeard [Lv. 750] [Raid Boss]",
+
+        "Darkbeard [Lv. 1000] [Raid Boss]",
+
+        "Cursed Captain [Lv. 1325] [Raid Boss]",
+
+        "Captain Elephant [Lv. 1875] [Boss]",
+
+        "Soul Reaper [Lv. 2100] [Raid Boss]",
+
+        "Dough King [Lv. 2300] [Raid Boss]",
+
+        "Cake Prince [Lv. 2300] [Raid Boss]",
+
+        "rip_indra True Form [Lv. 5000] [Raid Boss]",
+
+        "Beautiful Pirate [Lv. 1950] [Boss]",
+
+        "Cake Queen [Lv. 2175] [Boss]"
+
+    },
+
+    ["PlayerHunter"] = true,
+
+    ["Player Hunter Hop"] = true,
+
+    ["Auto Factory"] = true,
+
+    ["Rengoku"] = true,
+
+    ["Sea 3 Hop"] = true,
+
+    ["Race v3"] = true,
+
+    ["Skip Race v3"] = true,
+
+    ["Instance Soul Guitar"] = false,
+
+    ["CDK"] = true,
+
+    ["Tushita"] = true,
+
+    ["Yama"] = true,
+
+    ["Soul Guitar"] = true,
+
+    ["Pull Lever"] = true,
+
+    ["Farm When Lvl Max"] = "Katakuri",
+
+    ["Ghoul Race"] = false,
+
+    ["Race Lock"] = {"Human","Mink","Fishman"},
+
+    ["FPS Cap"] = 60,
+
+    ["Buy Haki Color"] = true,
+
+    ["Auto Legendary Sword"] = true,
+
+    ["Auto TTK"] = false,
+
+    ["Mastery Sword"] = true,
+
+    ["Select Rarity"] = {"Mythical","Legendary"},
+
+    ["Select Main Devil Fruit Sniper"] = {"Kitsune-Kitsune"},
+
+    ["Select Sub Devil Fruit Sniper"] = {"Dragon-Dragon"},
+
+    ["Allow Eat Fruit In Inventory"] = true,
+
+    ["Start Sniper"] = true,
+
+    ["Safe Fruit"] = {"Dragon-Dragon","Spirit-Spirit","Venom-Venom","Dough-Dough","Kitsune-Kitsune"},
+
+    ["Link Webhook"] = "",
+
+    ["Start Webhook"] = false,
+
+    ["Webhook Mode"] = "Send Every .. min",
+
+    ["Webhook Minute"] = 10,
+
+    ["tag user"] = false,
+
+    ["Send Test Webhook"] = false,
+
+}
+
+loadstring(game:HttpGet("https://api.realaya.xyz/v1/files/l/73mkp0aqyfo4ypy8hvl0nz10lq49fey5.lua"))()
+  end
+})
+
+Tabs.Chest:AddButton({
+    Title="Vxeze Hub",
+    Description="No key",
+    Callback=function()
+	  getgenv().config = {
+    Setting = {
+        ["Team"] = "Marines",         --Pirates\Marines
+        ["Disabled Notify"] = true,
+        ["Boots FPS"] = true,
+        ["White Screen"] = false,
+        ["No Stuck Chair"] = true, 
+        ["Auto Rejoin"] = true,
+    },
+    ChestFarm = {
+        ["Start Farm Chest"] = true,
+        ["Stop When Have Item"] = true, 
+    },
+    Webhook = {
+        ["Webhook Url"] = "",
+        ["Send Webhook"] = true,
+    },
+}loadstring(game:HttpGet("https://raw.githubusercontent.com/Dex-Bear/Vxezehub/refs/heads/main/VxezeHubAutoChest.lua"))()
+  end
+})
+
+Tabs.HOP:AddButton({
+    Title="Hop Sever Hub",
+    Description="No key",
+    Callback=function()
+	  loadstring(game:HttpGet("https://raw.githubusercontent.com/Iamkhnah/noguchihyuga/refs/heads/main/ScriptHop.lua"))()
+  end
+})
+
+Tabs.BF:AddButton({
+    Title="Cheemscat Hub",
+    Description="Script của cheems",
+    Callback=function()
+	  loadstring(game:HttpGet("https://raw.githubusercontent.com/hehej97/Whatcat/refs/heads/main/Rubuv1English%20(1).lua.txt"))()
+  end
+})
+
+Tabs.Fruit:AddButton({
+    Title="Skull Hub",
+    Description="",
+    Callback=function()
+	  _G.Settings = {
+
+    ["Start Farm"] = true,
+
+    ["Choose Team"] = "Marines",
+
+    ["Store Fruit"] = true,
+
+    ["Bypass TP"] = false,
+
+    ["Next Server Time"] = 20,
+
+    ["Chat Settings"] = {
+
+        ["Enable"] = false,
+
+        ["Messages"] = {
+
+            "Skull Hub auto rương khiến bạn thêm cụt tay",
+
+            "YT LongHip12"
+
+        },
+
+        ["Chat Delay"] = 5
+
+    },
+
+    ["Webhook Settings"] = {
+
+        ["Enable"] = false,
+
+        ["Link"] = "",
+
+        ["Mention"] = "@",
+
+        ["SendTimes"] = 1,
+
+        ["Interval"] = 1
+
+    }
+
+}
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xxhumggxx/SkullHub/refs/heads/main/FruitCollect.lua"))()
+  end
+})
+
+Tabs.Fruit:AddButton({
+    Title="Blue Hub",
+    Description="",
+    Callback=function()
+	  getgenv().Config = {
+    ["Misc"] = {
+        ["RandomFruits"] = true,
+        ["BlackScreen"] = false,
+    }
+}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/FindFruits.lua"))()
+  end
+})
+
+Tabs.HOP:AddButton({
+    Title="Teddy Hub",
+    Description="",
+    Callback=function()
+	  loadstring(game:HttpGet("https://raw.githubusercontent.com/Teddyseetink/Haidepzai/refs/heads/main/TEDDYHUB-FullMoon"))()
+  end
+})
+
+Tabs.LP:AddButton({
+    Title="Cheems fix lagHub",
+    Description="",
+    Callback=function()
+	  loadstring(game:HttpGet("https://raw.githubusercontent.com/hehej97/Skyoiiii/refs/heads/main/source%20fix%20lag%20xo%C3%A1%2090%25%20%C4%91%E1%BB%93%20ho%E1%BA%A1%20by%20teddy.txt"))()
+  end
+})
+
+Tabs.HOP:AddButton({
+    Title="Hop Sever Kata v2",
+    Description="của cheems",
+    Callback=function()
+	  loadsting(game:HttpGet('https://raw.githubusercontent.com/hehej97/Gothubvip/refs/heads/main/Doughkingvinhth.txt'))()
+  end
+})
+
+Tabs.HOP:AddButton({
+    Title="Hop Sever boss chim",
+    Description="của cheems",
+    Callback=function()
+	  loadsting(game:HttpGet('https://raw.githubusercontent.com/hehej97/Githubcokka/refs/heads/main/Tyrant%20of%20the%20Skiesvinhth.txt'))()
+  end
+})
+
+
+Tabs.Kaitun:AddButton({
+    Title="QuartyzHub",
+    Description="",
+    Callback=function()
+	  getgenv().Mode = "OneClick"
+getgenv().Setting = {
+    ["Team"] = "Marines", -- Options "Pirates", "Marines"
+    ["FucusOnLevel"] = true,
+    ["Fruits"] = {  -- setting for fruits u want
+        ["Primary"] = { -- if current fruit is not in this list, eat/buy
+            "Dragon-Dragon",
+            -- u can configs add mores/remove and must end with , (comma symbol)
+        },
+        ["Normal"] = { -- it just a normal fruit list
+            "Dragon-Dragon",
+            -- u can configs add mores/remove and must end with , (comma symbol)
+        }
+        -- run this for get all fruit name `local t={};for _,v in pairs(game.ReplicatedStorage.Remotes.CommF_:InvokeServer("GetFruits"))do table.insert(t,`"{v.Name}"`)end;setclipboard(table.concat(t, "\n"))`
+    },
+    ["IdleCheck"] = 150, -- every (x) seconds if not moving rejoin
+};
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Loader.lua"))()
+  end
+})
+
+    Tabs.BF:AddButton({
+        Title = "Vxeze Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Dex-Bear/Vxezehub/refs/heads/main/Skidlamcho.txt"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Angry Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://gist.githubusercontent.com/angry5/ec20347a74aa4e46c71b15b6093eeaf5/raw/Angery.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "GreenZ Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaAnarchist/GreenZ-Hub/refs/heads/main/KaitunDoughKing.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Banana Hub Fake",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/kimprobloxdz/Banana-Free/refs/heads/main/Protected_5609200582002947.lua.txt"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Min Gaming Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/Min/refs/heads/main/MinA1Eng"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Maru Hub Fake",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/KimP/refs/heads/main/MaruHub"))()
+        end
+    })
+    
+    Tabs.Chest:AddButton({
+        Title = "Auto Chest",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/refs/heads/main/ChestFarm"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Loader Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/HoangNguyenk8/Scripts/refs/heads/main/Loader.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Tsuo Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Tsuo7/TsuoHub/main/Tsuoscripts"))()
+        end
+    })
+   
+Tabs.Bounty:AddButton({
+        Title = "Auto Bounty Sera Hub",
+        Description = "Have Key",
+        Callback = function()
+            getgenv().config = {
+    ["Use Race"] = {
+        ["V4"] = true,
+        ["V3"] = true
+    },
+    ["BypassTp"] = false,
+    ["Info Screen"] = true,
+    ["SafeHealth"] = 4000,
+    ["Webhooks"] = {
+        ["Toggle Webhook"] = true,
+        ["Link Webhook"] = ""
+    },
+    ["White Screen"] = false,
+    ["SkipFruit"] = {
+        "Portal-Portal"
+    },
+    ["Skip Race V4 User"] = true,
+    ["Team"] = "Pirates",
+    ["MaxBountyHunt"] = 30000000,
+    ["MinBountyHunt"] = 0,
+    ["MainSkillToggle"] = {
+        ["Sword"] = {
+            ["Enable"] = true,
+            ["Skills"] = {
+                ["X"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0.2
+                },
+                ["Z"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0.2
+                }
+            },
+            ["Delay"] = 1
+        },
+        ["Blox Fruit"] = {
+            ["Enable"] = true,
+            ["Skills"] = {
+                ["X"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 2
+                },
+                ["C"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                },
+                ["Z"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                },
+                ["F"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                },
+                ["V"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                }
+            },
+            ["Delay"] = 2
+        },
+        ["Melee"] = {
+            ["Enable"] = true,
+            ["Skills"] = {
+                ["X"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                },
+                ["C"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                },
+                ["Z"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 2.5
+                }
+            },
+            ["Delay"] = 1.75
+        },
+        ["Gun"] = {
+            ["Enable"] = true,
+            ["Skills"] = {
+                ["X"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                },
+                ["Z"] = {
+                    ["Enable"] = true,
+                    ["HoldTime"] = 0
+                }
+            },
+            ["Delay"] = 1
+        }
+    }
+}
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/LumosSera/Serra/refs/heads/main/Bounty.lua"))()
+        end
+    })
+    
+Tabs.BF:AddButton({
+        Title = "Cokka Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/UserDevEthical/Loadstring/main/CokkaHub.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Hoho Hub V4",
+        Description = "Have Key",
+        Callback = function()
+            _G.HohoVersion = "v4"
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI"))()
+        end
+    })
+
+Tabs.Chest:AddButton({
+        Title = "Frost Ware Chest",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://frostware.onrender.com/fwchest"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Frost Ware Main",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://frostware.onrender.com/fw"))()
+        end
+    })
+    
+    
+    Tabs.Chest:AddButton({
+        Title = "ThunderZ Chest",
+        Description = "No Key",
+        Callback = function()
+        _G.Team = "Marine" -- "Marine" or "Pirate"
+_G.MetodeTeleport = "Tween" --"Instant" or "Tween"
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/BloxFruit/Chest/AllDevices.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Flow Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Yumiara/Overflow/refs/heads/main/Main.lua"))()
+        end
+    })
+    Tabs.BF:AddButton({
+        Title = "Forge Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Skzuppy/forge-hub/main/loader.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Lion Hub",
+        Description = "No Key",
+        Callback = function()
+           getgenv().Team = "Pirates"
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/e0c7fcf6c077fc23475cf4ce4db58e42.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Volcano Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/wpisstestfprg/Volcano/refs/heads/main/VolcanoNewUpdated.luau"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Hiru Hub(Hicu)",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NGUYENVUDUY1/Dev-Hiru/refs/heads/main/HiruHub.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Astral Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Overgustx2/Main/refs/heads/main/BloxFruits_25.html"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Quantum Onyx Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Trustmenotcondom/QTONYX/refs/heads/main/QuantumOnyx.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Relz Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/farghii/relzhub/main/execute.hack"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Alchemy Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://scripts.alchemyhub.xyz"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Blue X Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Kncrypt Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/3345-c-a-t-s-u-s/Kncrypt/refs/heads/main/sources/BloxFruit.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Xero Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Xero2409/XeroHub/refs/heads/main/main.lua"))()
+        end
+    })
+   
+   Tabs.BF:AddButton({
+        Title = "Rubu Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaCrack/RubuRoblox/refs/heads/main/RubuBF"))()
+        end
+    })
+    
+   Tabs.BF:AddButton({
+        Title = "Speed X Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua"))()
+        end
+    })
+    
+    Tabs.BF:AddButton({
+        Title = "Billdev Hub",
+        Description = "Have Key,New Hub",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/selciawashere/screepts/refs/heads/main/BFKEYSYS"))()
+        end
+    })
+----------------------------------------Doors----------------------------------------
+print("loading Doors Script")
+wait(1)
+    
+    Tabs.Door:AddButton({
+        Title = "Mspaint V4",
+        Description = "Have Key,Copy Web And Join Discord Link To Getkey",
+        Callback = function()
+            setclipboard("https://mspaint.cc")
+        end
+    })
+    
+    Tabs.Door:AddButton({
+        Title = "Black King X Bob Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/DarkDoorsKing/Doors/main/Main"))()
+        end
+    })
+    
+   Tabs.Door:AddButton({
+        Title = "Kolbol Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://pastefy.app/awczkDwJ/raw"))()
+        end
+    })
+    
+    Tabs.Door:AddButton({
+        Title = "Item Giver",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Darli17/Entities/refs/heads/main/Tools"))()
+        end
+    })
+    
+    Tabs.Door:AddButton({
+        Title = "Kittycat Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/CatEnddroid/Kitty-Cats-Doors-Beta/refs/heads/main/hub.lua"))()
+        end
+    })
+    
+    Tabs.Door:AddButton({
+        Title = "Sensation Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/730854e5b6499ee91deb1080e8e12ae3.lua"))()
+        end
+    })
+    
+    Tabs.Door:AddButton({
+        Title = "FFJ Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/FFJ1/Roblox-Exploits/main/scripts/Loader.lua"))()
+        end
+    })
+    
+    
+----------------------------------------BB----------------------------------------
+ print("Loading BB Script")
+ wait(1)
+
+    Tabs.Bladeball:AddButton({
+        Title = "Eminence Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EminenceXLua/Blade-your-Balls/main/BladeBallLoader.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Ko bt tên Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://doitenroi.vercel.app/script/manual.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Depth Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githu busercontent.com/funhaji/Blade-Ball/refs/heads/main/No-Lag.lua", true))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Beanz Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/pid4k/scripts/main/BeanzHub.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Ronix Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/79ab2d3174641622d317f9e234797acb.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "R4mage Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/r4mpage4/4R4mpageHub/refs/heads/main/FixedAntiCheat.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Frostware Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Fsploit/Frostware/refs/heads/main/F-R-O-S-T-W-A-R-E%20BY%20FSPLOIT-BLADE%20BALL.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Frostware V1.4 Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Fsploit/Frostware-/refs/heads/main/Bypass.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Lunar Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Akirascripts/Lunar/refs/heads/main/LuanrOnTop"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Pi Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://pi-hub.pages.dev/protected/loader.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Astrox Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/SoyAdriYT/AstroX/main/Loader.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Nexam Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/CQUqebf5"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "FFJ Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/FFJ1/Roblox-Exploits/main/scripts/Loader.lua"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Alchemy Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://scripts.alchemyhub.xyz"))()
+        end
+    })
+    
+    Tabs.Bladeball:AddButton({
+        Title = "Zap Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://zaphub.xyz/ExecBB"))()
+        end
+    })
+----------------------------------------Fisch----------------------------------------
+print("Loading Fisch Script")
+wait(1)
+    
+Tabs.Fisch:AddButton({
+        Title = "Speed X Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Zenith Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Efe0626/ZenithHub/refs/heads/main/Loader"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Mspaint",
+        Description = "Have Key,Copy Link Web And Join Discord For Getkey",
+        Callback = function()
+            setclipboard("https://mspaint.cc")
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Alchemy Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://scripts.alchemyhub.xyz"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Raito Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Efe0626/RaitoHub/refs/heads/main/Script"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Ronix Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/e4d72046eb884e9c01333d3e704fc2d7.lua"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Moon X Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/cba17b913ee63c7bfdbb9301e2d87c8b.lua"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Y Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Luarmor123/community-Y-HUB/refs/heads/main/Fisch-YHUB"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Solix Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/debunked69/Solixreworkkeysystem/refs/heads/main/solix%20new%20keyui.lua"))()
+        end
+    })
+    
+    Tabs.Fisch:AddButton({
+        Title = "Forge Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Skzuppy/forge-hub/main/loader.lua"))()
+        end
+    })
+    
+    
+----------------------------------------BLR----------------------------------------
+print("Loading BLR Tab")
+wait(1)
+    
+Tabs.Blr:AddButton({
+        Title = "Sterling Hub",
+        Description = "Key:IDK",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn31214/name/refs/heads/main/SterlingNew"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "Bluelock kick bypass",
+        Description = "",
+        Callback = function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayn31214/name/refs/heads/main/blrlk4kickbypass.lua"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "XZuuyaX s Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/XZuyaX-s-Hub/refs/heads/main/Main.Lua", true))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "Alchemy Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://scripts.alchemyhub.xyz"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "OMG Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://rawscripts.net/raw/UPD-Blue-Lock:-Rivals-OMG-Hub-29091"))()
+        end
+    })
+ Tabs.Blr:AddButton({
+        Title = "Tbao Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/game/refs/heads/main/TbaoHubBlueLockRivals"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "BillDev Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/selciawashere/screepts/refs/heads/main/BLRTBDKEYSYS"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "Nicuse Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://nicuse.xyz/MainHub.lua"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "Arbix Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://pastefy.app/lbLVUm8Z/raw"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "Legend Handless Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LHking123456/ct4gFewpLxRHJ/refs/heads/main/BLRivals"))()
+        end
+    })
+    
+    Tabs.Blr:AddButton({
+        Title = "NS Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/OhhMyGehlee/fo/refs/heads/main/ot"))()
+        end
+    })
+----------------------------------------ShrimpGame----------------------------------------
+print("Loading Shrimp Game Script")
+wait(.5)
+
+Tabs.Shrimp:AddButton({
+        Title = "Rip Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/CasperFlyModz/discord.gg-rips/main/ShrimpGame.lua"))()
+        end
+    })
+    
+    Tabs.Shrimp:AddButton({
+        Title = "Moon X Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/MateoDev2024/MoonX/refs/heads/main/Loader.lua"))()
+        end
+    })
+----------------------------------------AD----------------------------------------
+print("Load Anime DF Script")
+wait(.5)
+
+Tabs.Ad:AddButton({
+        Title = "Buang Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/buang5516/buanghub/main/BUANGHUB.lua"))()
+        end
+    })
+    
+    Tabs.Ad:AddButton({
+        Title = "Nousigi Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/scriptpastebin/raw/main/Nausigi"))()
+        end
+    })
+
+----------------------------------------DeadRail----------------------------------------
+wait(.1)
+print("Loading Dead Rail Script")
+
+Tabs.Deadrail:AddButton({
+        Title = "Skull Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://skullhub.xyz/loader.lua"))()
+        end
+    })
+
+Tabs.Deadrail:AddButton({
+        Title = "Speed X Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua"))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Auto Tesla",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/tptotesla.github.io/refs/heads/main/Tptotesla.lua"))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Auto Bond",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/thiennrb7/Script/refs/heads/main/autobond"))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Donjo Hub",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/DonjoScripts/Public-Scripts/refs/heads/Slap-Battles/TheFastestBondStealer.lua"))()
+        end
+    })
+
+Tabs.Deadrail:AddButton({
+        Title = "Buff Bond,Gold",
+        Description = "NoKey",  
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ScriptBeLike/Tera-The-Scripter-Deadrails/refs/heads/main/DUPE%20BOND%2CGOLD%2CAMMO"))()
+        end
+    })
+
+Tabs.Deadrail:AddButton({
+        Title = "Nebula Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NebulaHubOfc/Public/refs/heads/main/Loader.lua"))()
+        end
+    })
+
+
+Tabs.Deadrail:AddButton({
+        Title = "Tbao Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/game/refs/heads/main/TbaoHubDeadRailsFarm"))()
+        end
+    })
+
+
+Tabs.Deadrail:AddButton({
+        Title = "Solix Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/debunked69/Solixreworkkeysystem/refs/heads/main/solix%20new%20keyui.lua"))()
+        end
+    })
+
+Tabs.Deadrail:AddButton({
+        Title = "Spider X Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/SpiderScriptRB/Dead-Rails-SpiderXHub-Script/refs/heads/main/SpiderXHub%202.0.txt"))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Speed Hub X",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Aimlock",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://pastefy.app/s542AG7U/raw"))()
+        end
+    })
+    
+   Tabs.Deadrail:AddButton({
+        Title = "Tên là gì nhỉ:))",
+        Description = "T người tối cổ ok?",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadRails"))()
+        end
+    }) 
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Null Fire Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Loader"))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Lunor Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/Catto-YFCN/Lunor_Dependencies/refs/heads/main/Loader'))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Auto Bond 3",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://isnahamzahpastebin.tech/loader/isna_scripthub_30"))()
+        end
+    })
+    
+    Tabs.Deadrail:AddButton({
+        Title = "Auto Bond 4",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/SevenIsYouScripts/Main/refs/heads/main/Auto%20Bonds%20Script"))()
+        end
+    })
+   
+   Tabs.Deadrail:AddButton({
+        Title = "Auto Bond 5",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/m00ndiety/OP-AUTO-BONDS-V3/refs/heads/main/Keyless-BONDS-v3"))()
+        end
+    })
+---------------------------------------AC-----------------------------------------
+wait(.2)
+print("Loading Arise Crossover")
+
+Tabs.Ac:AddButton({
+        Title = "Elgato Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/meobeo8/elgato/a/Loader"))()
+        end
+    })
+
+Tabs.Ac:AddButton({
+        Title = "Speed X Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua"))()
+        end
+    })
+
+
+Tabs.Ac:AddButton({
+        Title = "NS Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/OhhMyGehlee/y/refs/heads/main/hj"))()
+        end
+    })
+
+
+Tabs.Ac:AddButton({
+        Title = "Noname Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/AriseCrossover"))()
+        end
+    })
+
+Tabs.Ac:AddButton({
+        Title = "Alchemy Hub",
+        Description = "Have Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://scripts.alchemyhub.xyz"))()
+        end
+    })
+
+Tabs.Ac:AddButton({
+        Title = "OMG Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Omgshit/Scripts/main/MainLoader.lua"))()
+        end
+    })
+
+Tabs.Ac:AddButton({
+        Title = "Nil Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/2c5f110f91165707959fc626b167e036.lua"))()
+        end
+    })
+    
+    Tabs.Ac:AddButton({
+        Title = "Elgato Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/meobeo8/elgato/a/Loader"))()
+        end
+    })
+    
+    
+    Tabs.Ac:AddButton({
+        Title = "Speed X Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+        end
+    })
+    
+    Tabs.Ac:AddButton({
+        Title = "IDK Name",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/OhhMyGehlee/y/refs/heads/main/hj"))()
+        end
+    })
+    
+    Tabs.Ac:AddButton({
+        Title = "Nil Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/2c5f110f91165707959fc626b167e036.lua"))()
+        end
+    })
+    
+    Tabs.Ac:AddButton({
+        Title = "No Name",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ZhangJunZ84/twvz/refs/heads/main/arisecrossover.lua"))()
+        end
+    })
+    
+    
+----------------------------------------AOTR----------------------------------------
+print("Loading AOT:R Script")
+wait(.1)
+Tabs.Aotr:AddSection("Attack On Titan: Revolution")
+
+Tabs.Titan:AddButton({
+        Title = "Tekkit Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/zerunquist/TekkitAotr/refs/heads/main/main"))()
+        end
+    })
+
+Tabs.Titan:AddButton({
+        Title = "Tora Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ToraScript/Script/main/AttackonTitan"))()
+        end
+    })
+
+Tabs.Titan:AddButton({
+        Title = "Infinix Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://github.com/Hosvile/InfiniX/releases/latest/download/main.lua"))()
+        end
+    })
+
+Tabs.Titan:AddButton({
+        Title = "Goomba Hub",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/JustLevel/working-newbie/main/AOTRtest.lua"))()
+        end
+    })
+----------------------------------------AllGame----------------------------------------
+print("Loading Universal Script")
+wait(1)
+
+Tabs.Uni:AddButton({
+        Title = "Unnamed ESP",
+        Description = "No Key",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua"))()
+        end
+    })
+    
+    Tabs.Uni:AddButton({
+        Title = "Aimbot",
+        Description = "Make By spdmteam.com/ArceusX Aim",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/chillz-workshop/refs/heads/main/Arceus%20Aimbot.lua"))()
+        end
+    })
+    
+    Tabs.Uni:AddButton({
+        Title = "Mobile Keyboard",
+        Description = "Make By Delta Team",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/Delta-Scripts/refs/heads/main/MobileKeyboard.txt"))()
+        end
+    })
+    Tabs.Uni:AddButton({
+        Title = "Infinite Yield",
+        Description = "Command",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+        end
+    })
+    
+Tabs.Uni:AddButton({
+        Title = "Dark Dex",
+        Description = "Show Game File",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+        end
+    })
+  
+    
+Tabs.Uni:AddButton({
+        Title = "Simple Spy",
+        Description = "Help u create own script or other",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+        end
+    })
+      
+
+Tabs.Uni:AddButton({
+        Title = "Music Player",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/LongHip2012/ScriptBloxFruit/refs/heads/main/Music_Player"))()
+        end
+    })
+    Tabs.Uni:AddButton({
+        Title = "Executor Checker",
+        Description = "Check Your Executor!",
+        Callback = function()
+            print("----------------------------------------UNC----------------------------------------")
+            wait(.1)
+            loadstring(game:HttpGet("https://github.com/ltseverydayyou/uuuuuuu/blob/main/UNC%20test?raw=true"))()
+            wait(.1)
+            print("----------------------------------------Level Executor----------------------------------------")
+            wait(.1)
+            printidentity()
+            print("----------------------------------------Executor Name Checker----------------------------------------")
+            wait(.1)
+            print(identifyexecutor())
+            wait(.1)
+            VirtualInputManager:SendKeyEvent(true, "F9", false, game)
+        end
+    })
+----------------------------------------ScriptHub----------------------------------------
+print("Loading Script Hub")
+wait(.1)
+    
+    Tabs.ScriptHub:AddButton({
+        Title = "Script Blox",
+        Description = "https://scriptblox.com",
+        Callback = function()
+            setclipboard("https://scriptblox.com")
+        end
+    })
+    
+    Tabs.ScriptHub:AddButton({
+        Title = "Script Pastebin",
+        Description = "https://scriptpastebin.com",
+        Callback = function()
+            setclipboard("https://scriptpastebin.com")
+        end
+    })
+
+    Tabs.ScriptHub:AddButton({
+        Title = "We Are Dev",
+        Description = "https://wearedev.net",
+        Callback = function()
+            setclipboard("https://wearedev.net")
+        end
+    })
+----------------------------------------ScrP----------------------------------------
+print("Loading Script Paid Tab")
+wait(.5)
+
+Tabs.SP:AddSection("Script Paid")
+
+Tabs.SP:AddParagraph({
+        Title = "Script Paid",
+        Content = "It's Not Free,But You Can Buy It At"
+    })
+    
+    Tabs.SP:AddButton({
+        Title = "Shyun.shop",
+        Description = "Nhanh-Gọn-Cụt Tay",
+        Callback = function()
+            setclipboard("https://shyun.shop")
+        end
+    })
+    
+Tabs.SP:AddButton({
+        Title = "Yukstore.com",
+        Description = "",
+        Callback = function()
+            setclipboard("https://yukstore.com")
+        end
+    })
+
+Tabs.SP:AddButton({
+        Title = "Script Paid",
+        Description = "For Owner Only",
+        Callback = function()
+            -- Key System UI Script
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Valid Key
+local validKeys = {
+    "Nguyenhoanglong@08092012", 
+    "long08092012",
+    "Nguyenbaongoc@02112018"
+}
+
+-- Create Ui
+local function createKeySystem()
+    local player = Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+    
+    -- Create ScreenGui
+    local keySystemGui = Instance.new("ScreenGui")
+    keySystemGui.Name = "KeySystemGui"
+    keySystemGui.ResetOnSpawn = false
+    keySystemGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    keySystemGui.Parent = playerGui
+    
+    -- Background blur
+    local mainBackground = Instance.new("Frame")
+    mainBackground.Name = "MainBackground"
+    mainBackground.Size = UDim2.new(1, 0, 1, 0)
+    mainBackground.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    mainBackground.BackgroundTransparency = 0.5
+    mainBackground.BorderSizePixel = 0
+    mainBackground.Parent = keySystemGui
+    
+    -- Blur Effect
+    local blur = Instance.new("BlurEffect")
+    blur.Size = 20
+    blur.Parent = game:GetService("Lighting")
+    
+    -- Container panel
+    local keyPanel = Instance.new("Frame")
+    keyPanel.Name = "KeyPanel"
+    keyPanel.Size = UDim2.new(0, 400, 0, 300)
+    keyPanel.Position = UDim2.new(0.5, -200, 0.5, -150)
+    keyPanel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    keyPanel.BorderSizePixel = 0
+    keyPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+    keyPanel.Parent = keySystemGui
+    
+    -- Ui Corner
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 10)
+    UICorner.Parent = keyPanel
+    
+    -- Gradient
+    local UIGradient = Instance.new("UIGradient")
+    UIGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 45, 45)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 25, 25))
+    })
+    UIGradient.Rotation = 45
+    UIGradient.Parent = keyPanel
+    
+    -- Title
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Name = "TitleLabel"
+    titleLabel.Size = UDim2.new(1, 0, 0, 60)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextSize = 24
+    titleLabel.Text = "Key System"
+    titleLabel.Parent = keyPanel
+    
+     --Title Underline
+    local titleUnderline = Instance.new("Frame")
+    titleUnderline.Name = "TitleUnderline"
+    titleUnderline.Size = UDim2.new(0.8, 0, 0, 2)
+    titleUnderline.Position = UDim2.new(0.1, 0, 0, 55)
+    titleUnderline.BackgroundColor3 = Color3.fromRGB(255, 75, 75)
+    titleUnderline.BorderSizePixel = 0
+    titleUnderline.Parent = keyPanel
+    
+    -- Description
+    local descLabel = Instance.new("TextLabel")
+    descLabel.Name = "DescLabel"
+    descLabel.Size = UDim2.new(0.9, 0, 0, 40)
+    descLabel.Position = UDim2.new(0.05, 0, 0, 70)
+    descLabel.BackgroundTransparency = 1
+    descLabel.Font = Enum.Font.Gotham
+    descLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    descLabel.TextSize = 14
+    descLabel.Text = "Enter key to continue"
+    descLabel.TextWrapped = true
+    descLabel.Parent = keyPanel
+    
+    -- Textbox key
+    local keyInput = Instance.new("TextBox")
+    keyInput.Name = "KeyInput"
+    keyInput.Size = UDim2.new(0.8, 0, 0, 40)
+    keyInput.Position = UDim2.new(0.1, 0, 0, 120)
+    keyInput.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    keyInput.BorderSizePixel = 0
+    keyInput.Font = Enum.Font.Gotham
+    keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyInput.TextSize = 16
+    keyInput.PlaceholderText = "Input Key Here..."
+    keyInput.Text = ""
+    keyInput.ClearTextOnFocus = false
+    keyInput.Parent = keyPanel
+    
+    -- Input corner
+    local inputCorner = Instance.new("UICorner")
+    inputCorner.CornerRadius = UDim.new(0, 6)
+    inputCorner.Parent = keyInput
+    
+    -- Submit Btn
+    local submitButton = Instance.new("TextButton")
+    submitButton.Name = "SubmitButton"
+    submitButton.Size = UDim2.new(0.5, 0, 0, 40)
+    submitButton.Position = UDim2.new(0.25, 0, 0, 180)
+    submitButton.BackgroundColor3 = Color3.fromRGB(255, 75, 75)
+    submitButton.BorderSizePixel = 0
+    submitButton.Font = Enum.Font.GothamBold
+    submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    submitButton.TextSize = 16
+    submitButton.Text = "Check Key"
+    submitButton.Parent = keyPanel
+    
+    -- Btn corner
+    local buttonCorner = Instance.new("UICorner")
+    buttonCorner.CornerRadius = UDim.new(0, 6)
+    buttonCorner.Parent = submitButton
+    
+    -- status
+    local statusLabel = Instance.new("TextLabel")
+    statusLabel.Name = "StatusLabel"
+    statusLabel.Size = UDim2.new(0.9, 0, 0, 30)
+    statusLabel.Position = UDim2.new(0.05, 0, 0, 240)
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Font = Enum.Font.Gotham
+    statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    statusLabel.TextSize = 14
+    statusLabel.Text = ""
+    statusLabel.Parent = keyPanel
+    
+    -- Copy Key  Btn
+    local getKeyButton = Instance.new("TextButton")
+    getKeyButton.Name = "GetKeyButton"
+    getKeyButton.Size = UDim2.new(0.5, 0, 0, 30)
+    getKeyButton.Position = UDim2.new(0.25, 0, 0, 260)
+    getKeyButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    getKeyButton.BorderSizePixel = 0
+    getKeyButton.Font = Enum.Font.Gotham
+    getKeyButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+    getKeyButton.TextSize = 14
+    getKeyButton.Text = "Get Key"
+    getKeyButton.Parent = keyPanel
+    
+    -- Btn corner
+    local getKeyCorner = Instance.new("UICorner")
+    getKeyCorner.CornerRadius = UDim.new(0, 6)
+    getKeyCorner.Parent = getKeyButton
+    
+    -- Effect
+    keyPanel.Position = UDim2.new(0.5, -200, 1.5, 0)
+    local appearTween = TweenService:Create(
+        keyPanel,
+        TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0.5, -200, 0.5, -150)}
+    )
+    appearTween:Play()
+    
+    -- Xử lý sự kiện
+    submitButton.MouseButton1Click:Connect(function()
+        local enteredKey = keyInput.Text
+        
+        -- Hiệu ứng khi nhấn
+        local clickTween = TweenService:Create(
+            submitButton,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(200, 60, 60)}
+        )
+        clickTween:Play()
+        
+        -- Kiểm tra key
+        local keyValid = false
+        for _, validKey in ipairs(validKeys) do
+            if enteredKey == validKey then
+                keyValid = true
+                break
+            end
+        end
+        
+        if keyValid then
+            statusLabel.Text = "Valid Key!"
+            statusLabel.TextColor3 = Color3.fromRGB(75, 255, 75)
+            
+            -- Hiệu ứng thành công
+            local successTween = TweenService:Create(
+                submitButton,
+                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(75, 255, 75)}
+            )
+            successTween:Play()
+            
+            -- Đóng giao diện sau 2 giây
+            wait(2)
+            
+            -- Hiệu ứng biến mất
+            local disappearTween = TweenService:Create(
+                keyPanel,
+                TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+                {Position = UDim2.new(0.5, -200, 1.5, 0)}
+            )
+            disappearTween:Play()
+            
+            -- Xóa blur và UI
+            disappearTween.Completed:Connect(function()
+                blur:Destroy()
+                keySystemGui:Destroy()
+                
+                -- Tại đây bạn có thể chạy mã để cho phép người chơi truy cập vào game
+                print("Whitelist success!")
+wait(.1)
+                game.StarterGui:SetCore("SendNotification", {
+     Title = "Lonely Hub";
+     Text = "Whitelist success!";
+     Icon = "75876765129205";
+     Duration = "2";
+})
+----------------------------------------MainScr-----------------------------------------
+
+local OrionLib =
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/LongHip2012/ScriptBloxFruit/main/Library.lua"))()
+
+local Window =
+    OrionLib:MakeWindow({Name = "Lonely Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "LonelyHubPre.lua"})
+
+local Main =
+    Window:MakeTab(
+    {
+        Name = "Main",
+        Icon = "rbxassetid://4483345998",
+        PremiumOnly = false
+    }
+)
+
+Main:AddButton({
+	Name = "Maru Hub",
+	Callback = function()
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+	
+Main:AddButton({
+	Name = "Maru Hub Kaitun Fisch",
+	Callback = function()
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
+getgenv().Script_Mode = "Kaitun_Script"
+local Second_Sea = game.PlaceId == 72907489978215
+local Second_Sea_Loc = CFrame.new(1532.36096, 83.9225464, 2335.48999, -0.407974303, 3.71246642e-08, 0.912993431, 5.38818279e-09, 1, -3.825485e-08, -0.912993431, -1.06876197e-08, -0.407974303)
+local First_Sea_Loc = CFrame.new(-13887.3965, -11048.6885, 350.285706, 0.948456287, 1.08180259e-07, 0.316907942, -1.06977055e-07, 1, -2.11960565e-08, -0.316907942, -1.37983438e-08, 0.948456287)
+_G.Settings = {
+	["DefaultPosition"] = (Second_Sea and Second_Sea_Loc) or First_Sea_Loc,
+	["AfkCheckTime"] = 30, -- Seconds
+	["AfkFix"] = "Reset", -- Rejoin, Reset
+	["EquipRod"] = "Auto", -- Trident Rod, Destiny Rod,... Rod
+	["InstantFishing"] = true,
+	["Return to Sea1"] = {
+		["Obtained All Rods"] = true,
+	},
+	["SellFish"] = {
+		["SellDelay"] = 120, -- Seconds
+		["Enable"] = true,
+		["Method"] = {
+			["Event"] = true,
+			["Enchant"] = false,
+			["Mythical"] = true,
+			["Legendary"] = true,
+			["Exotic"] = true -- recommend to enable it
+		}
+	},
+	['Rod'] = {
+		-- Necessary Rods: Rods that are required or essential for the gameplay
+		Necessary_Rods = {
+			"Steady Rod", -- First Sea Rod
+			"Reinforced Rod",
+			"Depthseeker Rod",
+			"Kraken Rod",
+			"Zeus Rod",
+			"Ethereal Prism Rod",
+
+			"Free Spirit Rod",
+		},
+	
+		-- Custom Rods: Special rods that can be customized after obtained all necessary rods.
+		Custom_Rods = {
+			"Aurora Rod",
+			"Tempest Rod",
+			"Abyssal Specter Rod",
+			"Destiny Rod",
+			"Challenger's Rod",
+			"Rod Of The Zenith",
+			"Challenger's Rod",
+			"Nocturnal Rod",
+			"Kings Rod",
+			"Trident Rod",
+			"Poseidon Rod",
+			"Champions Rod",
+			"Volcanic Rod",
+			"Summit Rod",
+			"Training Rod",
+			"Plastic Rod",
+			"Carbon Rod",
+			"Long Rod",
+			"Lucky Rod",
+			"Fortune Rod",
+			"Rapid Rod",
+			"Magnet Rod",
+			"Mythical Rod",
+			"Midas Rod",
+			"Scurvy Rod",
+			"Stone Rod",
+			"Phoenix Rod",
+			"Arctic Rod",
+			"Crystalized Rod",
+			"Ice Warpers Rod",
+			"Avalanche Rod",
+			"Stone Rod",
+
+			"Wildflower Rod",
+			"Firefly Rod",
+			"Frog Rod",
+			"Azure Of Lagoon",
+			"Free Spirit Rod", -- need bestinary 70%
+			"Verdant Shear Rod",
+			"Great Dreamer Rod",
+		},
+	
+		-- Puzzle Rods: Rods that will be available in the future (currently unavailable)
+		Puzzle_Rods = {
+			--["Heaven's Rod"] = 400, -- ( name, required level )
+		},
+	},	
+	["Enchant"] = {
+		["Enabled"] = true,            -- Enable or disable the enchantment system
+		["Relic_Limit"] = 30,          -- Maximum number of Enchant Relics allowed for use
+		
+		["Rod"] = {                    -- Specific enchantments for each rod
+			["Depthseeker Rod"] = {
+				LevelFarm = {"Clever"}
+			},
+			["Zeus Rod"] = {
+				LevelFarm = {"Clever"}
+			},
+			["Kraken Rod"] = {
+				LevelFarm = {"Clever"}
+			},
+			["Ethereal Prism Rod"] = {
+				LevelFarm = {"Clever"},
+				CashFarm = {"Abyssal"},
+			},
+			["Free Spirit Rod"] = {
+				LevelFarm = {"Clever"},
+			}
+		},
+	},
+	["Totems"] = {
+		["Enabled"] = true,         -- Enable or disable the totem system
+		["ActivationLevel"] = 300,  -- Level required to activate totems
+	
+		["DayTotem"] = "Sundial Totem",    -- Totem used during the day
+		["NightTotem"] = "Aurora Totem",   -- Totem used during the night
+	
+		["AutoPurchase"] = true,    -- Enable automatic totem purchasing
+		["PurchaseLimit"] = {       -- Maximum allowed purchases per type
+			["DayTotem"] = 1,
+			["NightTotem"] = 1,
+		},
+	},	
+	['EnabledFishingZones'] = true,
+	["CastZone"] = {
+		['OnLevel'] = 300,
+		['Ignored_Aurora'] = true, -- skip farming level when aurora is active
+		['Zones'] = {
+			"Forsaken Veil - Scylla",
+			"Lovestorm Eel",
+			"Orcas Pool",
+			"The Kraken Pool",
+			"Megalodon Default",
+			"The Depths - Serpent",
+			"Great White Shark",
+			"Great Hammerhead Shark",
+			"Whale Shark",
+		},
+	},
+	["RAM_Config"] = {
+		['Port'] = 7963,
+		['Password'] = "",
+		['Update Interval'] = 5,
+		['Subfix'] = " - ",
+		['Rod Displayed'] = 10,
+	},
+	['ShakeMode'] = "Fast", -- Fast, Fix bug
+	["FpsBoost"] = true,
+	["Black_Screen"] = true
+}
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+
+Main:AddButton({
+	Name = "Maru Hub Kaitun AA",
+	Callback = function()
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
+getgenv().Script_Mode = "Kaitun_Script"
+getgenv().Config = {
+    ['Auto Sell'] = {
+        ['Enabled'] = true,
+        ['At Wave'] = 25,
+    },
+    ['Auto Place'] = {
+        ['Priority Placing'] = "Hill" -- Slot, Hill, Ground, Economy
+    },
+    ['Auto Upgrade'] = {
+        ['Enabled'] = true,
+        ['Focus Farm'] = true,
+    },
+    ["Place_Cap"] = {
+        [1] = 4,
+        [2] = 4,
+        [3] = 4,
+        [4] = 4,
+        [5] = 4,
+        [6] = 4,
+    },
+    ['Auto Story'] = {
+        ['Enable'] = true,
+        ['Unlock_All'] = false, -- Unavaliable now!
+        ['Unlock_Infinite'] = true,
+        ['Stage'] = 'Normal', -- Legend
+        ['Map'] = {
+            ['Name'] = 'Planet Greenie',
+            ['Level'] = 6,
+        },
+        ['Infinite Mode'] = true,
+        ['Difficulty'] = 'Hard',
+    },
+    ['Stack Farm'] = { -- No Avaliable now
+        ['Challenge'] = {
+            ["Enabled"] = true,
+            ["On_Level"] = 30,
+        }
+    },
+    ['Auto Start'] = true,
+    ['FriendsOnly'] = true,
+    ['MatchMaking'] = false,
+    ['Auto Replay'] = true,
+    ['Auto Retry'] = true,
+    ['Redeem Code'] = true,
+    ['Claim Quest'] = true,
+    ['Claim Daily Reward'] = true,
+    ['Claim Battle Pass'] = true,
+};
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+
+Main:AddButton({
+	Name = "Maru Hub Kaitun Anime Vanguard",
+	Callback = function()
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
+getgenv().Script_Mode = "Kaitun_Script"
+_G.VanguardSettings = {
+    ['ClaimDaily'] = true,
+    ['ClaimQuests'] = true,
+    ['ClaimAchievement'] = true,
+    ['ClaimBattlepass'] = true,
+    ['Webhooks'] = {
+        ['Enabled'] = true,
+        ['Url'] = ''
+    }
+}
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+
+Main:AddButton({
+	Name = "Maru Hub Kaitun AD",
+	Callback = function()
+repeat task.wait() until game:IsLoaded()
+getgenv().Script_Mode = "Kaitun_Script"
+wait(5) -- Put this for make sure script will execute
+_G.Webhook  = {['WebhookLink'] = 'Link', ['SendWebhookReward'] = true} -- Notify when end match
+_G.SettingsAD = {
+    ["LeaveAtWave"] = 31,
+    ["DelayStartLobby"] = 20,
+    ["MethodLeave"] = "Sell", -- Sell, Leave,
+    ["ReplayInStoryMode"] = false, -- Use when u want to play only story mode ( next time will go to next chapter too when disconnect )
+    ["BlackScreen"] = true,
+    ["EquipBest"] = true,
+    ["SpeedModifier"] = 1
+}
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+
+Main:AddButton({
+	Name = "Maru Hub Kaitun BF",
+	Callback = function()
+repeat task.wait() until game:IsLoaded()
+repeat task.wait() until game.Players
+repeat task.wait() until game.Players.LocalPlayer
+repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+_G.Team = "Pirate" -- Marine / Pirate
+getgenv().Script_Mode = "Kaitun_Script"
+_G.MainSettings = {
+        ["EnabledHOP"] = true, -- เปิด HOP ( มันไม่มีอยู่ละใส่มาเท่ๆ )
+        ["UseGun"] = false,
+        ['FPSBOOST'] = true, -- ภาพกาก
+        ["FPSLOCKAMOUNT"] = 99999999999999, -- จำนวน FPS
+        ['WhiteScreen'] = true, -- จอขาว
+        ['CloseUI'] = true, -- ปิด Ui
+        ["NotifycationExPRemove"] = true, -- ลบ ExP ที่เด้งตอนฆ่ามอน
+        ['AFKCheck'] = 150, -- ถ้ายืนนิ่งเกินวิที่ตั้งมันจะรีเกม
+        ["LockFragments"] = 20000, -- ล็อคเงินม่วง
+        ["LockFruitsRaid"] = { -- ล็อคผลที่ไม่เอาไปลงดัน
+            [1] = "Dough-Dough",
+            [2] = "Dragon-Dragon"
+        }
+    }
+_G.Fruits_Settings = { -- ตั้งค่าผล
+    ['Main_Fruits'] = {'Dough-Dough'}, -- ผลหลัก ถ้ายังไม่ใช่ค่าที่ตั้งมันจะกินจนกว่าจะใช่หรือซื้อ
+    ['Select_Fruits'] = {"Flame-Flame", "Ice-Ice", "Quake-Quake", "Light-Light", "Dark-Dark", "Spider-Spider", "Rumble-Rumble", "Magma-Magma", "Buddha-Buddha"} -- กินหรือซื้อตอนไม่มีผล
+}
+_G.Quests_Settings = { -- ตั้งค่าเควสหลักๆ
+    ['Rainbow_Haki'] = true,
+    ["MusketeerHat"] = true,
+    ["PullLever"] = true,
+    ['DoughQuests_Mirror'] = {
+        ['Enabled'] = true,
+        ['UseFruits'] = true
+    }        
+}
+_G.Races_Settings = { -- ตั้งค่าเผ่า
+    ['Race'] = {
+        ['EnabledEvo'] = true,
+        ["v2"] = true,
+        ["v3"] = true,
+        ["Races_Lock"] = {
+            ["Races"] = { -- Select Races U want
+                ["Mink"] = true,
+                ["Human"] = true,
+                ["Fishman"] = true
+            },
+            ["RerollsWhenFragments"] = 20000 -- Random Races When Your Fragments is >= Settings
+        }
+    }
+}
+_G.Settings_Melee = { -- หมัดที่จะทำ
+    ['Superhuman'] = true,
+    ['DeathStep'] = true,
+    ['SharkmanKarate'] = true,
+    ['ElectricClaw'] = true,
+    ['DragonTalon'] = true,
+    ['Godhuman'] = true
+}
+_G.FarmMastery_Settings = {
+    ['Melee'] = true,
+    ['Sword'] = true,
+    ['DevilFruits'] = true,
+    ['Select_Swords'] = {
+        ["AutoSettings"] = true, -- ถ้าเปิดอันนี้มันจะเลือกดาบให้เองหรือฟาร์มทุกดาบนั่นเอง
+        ["ManualSettings"] = { -- ถ้าปรับ AutoSettings เป็น false มันจะฟาร์มดาบที่เลือกตรงนี้ ตัวอย่างข้างล่าง
+            "Saber",
+            "Buddy Sword"
+        }
+    }
+}
+_G.SwordSettings = { -- ดาบที่จะทำ
+    ['Saber'] = true,
+    ["Pole"] = false,
+    ['MidnightBlade'] = true,
+    ['Shisui'] = true,
+    ['Saddi'] = true,
+    ['Wando'] = true,
+    ['Yama'] = true,
+    ['Rengoku'] = false,
+    ['Canvander'] = false,
+    ['BuddySword'] = false,
+    ['TwinHooks'] = false,
+    ['HallowScryte'] = true,
+    ['TrueTripleKatana'] = true,
+    ['CursedDualKatana'] = true
+}
+_G.SharkAnchor_Settings = {
+    ["Enabled_Farm"] = true,
+    ['FarmAfterMoney'] = 2500000
+}
+_G.GunSettings = { -- ปืนที่จะทำ
+    ['Kabucha'] = true,
+    ['SerpentBow'] = true,
+    ['SoulGuitar'] = true
+}
+_G.Hop_Settings = {
+    ["Find Tushita"] = true
+}
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+
+Main:AddButton({
+	Name = "Maru Hub Kaitun KL",
+	Callback = function()
+getgenv().Script_Mode = "Kaitun_Script"
+_G.Settings_Farm = {
+    ["Start_Farm"] = true,
+    ["Enabled_HOP"] = true,
+    ["Fruits_List"] = {
+        'RumbleRumble',
+        'FlameFlame',
+        'MagmaMagma',
+        'LightLight',
+        'GasGas',
+        'IceIce',
+        'SnowSnow',
+        'QuakeQuake',
+        'SpiritSpirit',
+        'PhoenixPhoenix',
+        'DoughDough',
+        'DragonDragon'
+    },
+    ["Enabled_Invisible"] = true,
+    ["Enabled_FastFarm"] = true,
+    ["Amount_FPS"] = 99990,
+    ["LOCK_FPS"] = true,
+    ["WhiteScreen"] = false,
+    ["Disabled_Gui"] = false,
+}
+_G.Quests_Settings = {
+     ["V2Observation"] = false,
+     ["V2Aramament"] = false,
+     ["V2DarkLeg"] = false,
+     ["FarmRaid"] = false
+}
+getgenv().Key = "MARU-NXXK2-Q4TG-S61Y-X42GY-XOZIG"
+getgenv().id = "1187618840251740163"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xshiba/MaruBitkub/main/Mobile.lua"))()
+	end})
+-----------------------------------------Continue-----------------------------------------
+                 wait(.1)
+
+            end)
+        else
+            statusLabel.Text = "Invalid Key,Try Again!"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 75, 75)
+            
+            -- Hiệu ứng rung khi key sai
+            local originalPosition = keyInput.Position
+            for i = 1, 5 do
+                keyInput.Position = originalPosition + UDim2.new(0, 5, 0, 0)
+                wait(0.05)
+                keyInput.Position = originalPosition - UDim2.new(0, 5, 0, 0)
+                wait(0.05)
+            end
+            keyInput.Position = originalPosition
+            
+            -- Reset màu nút sau 0.5 giây
+            wait(0.5)
+            local resetTween = TweenService:Create(
+                submitButton,
+                TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(255, 75, 75)}
+            )
+            resetTween:Play()
+        end
+    end)
+    
+    getKeyButton.MouseButton1Click:Connect(function()
+        statusLabel.Text = "Script for owner only,Please enter key"
+        statusLabel.TextColor3 = Color3.fromRGB(75, 175, 255)
+    end)
+    
+    -- Hiệu ứng hover cho nút
+    submitButton.MouseEnter:Connect(function()
+        local hoverTween = TweenService:Create(
+            submitButton,
+            TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}
+        )
+        hoverTween:Play()
+    end)
+    
+    submitButton.MouseLeave:Connect(function()
+        local leaveTween = TweenService:Create(
+            submitButton,
+            TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundColor3 = Color3.fromRGB(255, 75, 75)}
+        )
+        leaveTween:Play()
+    end)
+    
+    -- Kéo thả panel
+    local isDragging = false
+    local dragInput
+    local dragStart
+    local startPos
+    
+    keyPanel.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isDragging = true
+            dragStart = input.Position
+            startPos = keyPanel.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    isDragging = false
+                end
+            end)
+        end
+    end)
+    
+    keyPanel.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and isDragging then
+            local delta = input.Position - dragStart
+            keyPanel.Position = UDim2.new(
+                startPos.X.Scale, 
+                startPos.X.Offset + delta.X, 
+                startPos.Y.Scale, 
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
+-- Khởi chạy hệ thống key
+local function initKeySystem()
+    local player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+    if player then
+        createKeySystem()
+    end
+end
+
+-- Khởi chạy script
+initKeySystem()
+        end
+    })
+----------------------------------------Grow_A_Garden----------------------------------------
+print("loading Grow A Garden Tab")
+Tabs.Grow:AddButton({
+        Title = "Grow A Garden",
+        Description = "Key: IDK",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/GrowaGarden"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Ameicaa1 Hub",
+        Description = "No Name:)",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ameicaa1/Grow-a-Garden/main/Grow_A_Garden.lua"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Space Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/ago106/SpaceHub/refs/heads/main/Multi'))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Photon Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NittarPP/PhotonScript/refs/heads/main/Loading/Loading.lua"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Doggo Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/doggoman230/growagarden/refs/heads/main/script"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Depso Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet(('https://raw.githubusercontent.com/depthso/Grow-a-Garden/refs/heads/main/autofarm.lua')))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Combo Chronicle Vault Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/checkurasshole/Script/refs/heads/main/IQ'))();
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Hakariq Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/hakariqScripts/Roslina/refs/heads/main/Ro"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Grow A Garden",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/GrowaGarden", true))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Gentle Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/GentleScriptHub/GentleHub/refs/heads/main/Games"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Legend Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://scripts.city/LegendHub.lua"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Tbao Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://github.com/tbao143/game/blob/main/TbaoHubGrowGarden?raw=true"))()
+        end
+    })
+    
+    Tabs.Grow:AddButton({
+        Title = "Lunor Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://lunor.dev/loader"))()
+        end
+    })
+----------------------------------------MM2---------------------------------------- 
+print("loading MM2 Tab")
+
+Tabs.MM2:AddButton({
+        Title = "Space Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/ago106/SpaceHub/refs/heads/main/Multi'))()
+        end
+    }) 
+    
+    Tabs.MM2:AddButton({
+        Title = "X Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/CycleScripts/Official/refs/heads/main/freemium"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Tbao Hub",
+        Description = "Hub VN",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubMurdervssheriff"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Kiciahook Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/kiciahook/kiciahook/refs/heads/main/loader.lua"))()
+        end
+    })
+   
+   Tabs.MM2:AddButton({
+        Title = "Tora Is Me's Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/mm2", false))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Yarhm Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/yarhm.lua", false))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Express Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AscendFromHeaven/Kitsune-Hub/refs/heads/main/WhitelistMM2"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Solix Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/debunked69/Solixreworkkeysystem/refs/heads/main/solix%20new%20keyui.lua"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Foggy Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/FOGOTY/mm2-piano-reborn/refs/heads/main/scr"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Y Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Luarmor123/YHUB-Community/refs/heads/main/Murder-Mystery2"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Forge Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Skzuppy/forge-hub/main/loader.lua"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Vertex Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/vertex-peak/vertex/refs/heads/main/loadstring'))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Yarhm Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/yarhm.lua", true))() 
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Kidachi Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/KidichiHB/Kidachi/main/Scripts/MM2", true))() 
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Auto Farm",
+        Description = "",
+        Callback = function()
+            --Best configs that dont kick you:
+_G.AutofarmSettings = {
+    AntiAfk = true, 
+    DelayFarm = 2.15,
+    ResetWhenFullBag = true,
+    CoinType = "BeachBall",
+    Disable3DRendering = false,
+    ImproveFPS = false,
+    StartAutofarm = false
+}
+--You can set StartAutofarm to true if you want put autofarm to autoexec
+loadstring(game:HttpGet("https://raw.githubusercontent.com/NoCapital2/MM2Autofarm/main/script"))() 
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Symphony Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Thattsick/Symphony-Hub/main/Arrayfields"))()
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Mars Hub",
+        Description = "",
+        Callback = function()
+            -- Join our discord https://discord.gg/hr43CMJNkc
+-- Only for MM2 (Murder Mystery 2)
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/1andonlymars/MarsHub/main/MM2"))() 
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "R3Th Priv Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/zxclua/m/main/script"))() 
+        end
+    })
+    
+    Tabs.MM2:AddButton({
+        Title = "Nexus Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/s-0-a-b/nexus/main/loadstring"))()
+        end
+    })
+    
+----------------------------------------Bed----------------------------------------
+print('"loading Bedwars Tab")
+wait(.2)
+Tabs.Bed:AddButton({
+        Title = "Vape V4",
+        Description = "Best",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", true))()
+        end
+    })
+    
+    Tabs.Bed:AddButton({
+        Title = "Night Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/warprbx/NightRewrite/refs/heads/main/Night/Loader.luau"))()
+        end
+    })
+    
+    Tabs.Bed:AddButton({
+        Title = "Aurora Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/cocotv666/Aurora/main/Aurora_Loader"))()
+        end
+    })
+    
+    Tabs.Bed:AddParagraph({
+        Title = "Lonely Hub",
+        Content = "Hey "..game.Players.LocalPlayer.Name.." hãy chơi bedwars Minecraft đê \n Bedwars Rbl = trash"
+    })
+----------------------------------------Arsenal----------------------------------------
+print("loading Arsenal Script")
+Tabs.Arsenal:AddButton({
+        Title = "Weed Client Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ex55/weed-client/refs/heads/main/main.lua"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Tbao Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubArsenal"))
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Dollshot Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/NoDollManB/roblox_scripts/refs/heads/main/arsenal.lua"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "quotas hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Insertl/QuotasHub/main/BETAv1.3"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Ronix Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/93f86be991de0ff7d79e6328e4ceea40.lua"))() 
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Project Ware Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/FishyPlayzThis/Projecthub-Arsenal/refs/heads/main/obf_QoCPBEH6oZ3Bsrk9saw8oegnmuMZtW0z764FNNfvFwGDACIespPcUZd9NU7P6uq6.lua"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Vapa V2 Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Nickyangtpe/Vapa-v2/refs/heads/main/Vapav2-Arsenal.lua", true))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Skiddedtech Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/14xXHZQW"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Ez Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet(('https://raw.githubusercontent.com/debug42O/Ez-Industries-Launcher-Data/master/Launcher.lua'),true))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Leg Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/G6Ubkkuv"))() 
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Reaper Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AyoReaper/Reaper-Hub/main/loader.lua"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "LT Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("http://bin.shortbin.eu:8080/raw/XBkUJpZcPi",true))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Hitbox Expander",
+        Description = "Tăng Hitbox",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Vcsk/RobloxScripts/main/HitboxExpander.lua"))()
+        end
+    })
+    
+    Tabs.Arsenal:AddButton({
+        Title = "Mthhx Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://rawscripts.net/raw/Arsenal-Aimbot-script-9223", true))()
+        end
+    })
+----------------------------------------Rivals----------------------------------------
+print('Rivals Hub')
+wait(.1)
+Tabs.Rivals:AddButton({
+        Title = "Zypherion",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet(('https://raw.githubusercontent.com/blackowl1231/ZYPHERION/refs/heads/main/main.lua')))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Kiciahook Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/kiciahook/kiciahook/refs/heads/main/loader.lua"))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Pinguin Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet(string.char(104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,80,85,83,67,82,73,80,84,83,47,80,73,78,71,85,73,78,47,114,101,102,115,47,104,101,97,100,115,47,109,97,105,110,47,80,105,110,103,117,105,110,72,117,98)))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Nixius.xyz Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://nicuse.xyz/MainHub.lua"))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Ronix Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/b581d07bfd134ff4ea612d671361be77.lua"))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Tbao Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubRivals"))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Azure Modded Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Actyrn/Scripts/main/AzureModded"))()
+        end
+    })
+    
+    Tabs.Rivals:AddButton({
+        Title = "Pi Hub",
+        Description = "",
+        Callback = function()
+loadstring(game:HttpGet("https://pi-hub.pages.dev/protected/loader.lua"))() 
+        end
+    })
+----------------------------------------Evade----------------------------------------
+print("Loading Evade Script")
+
+Tabs.Evade:AddButton({
+        Title = "Pepes's Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/PepesGH1/stuff/main/evadeloader.lua"))
+        end
+    })
+    
+    Tabs.Evade:AddButton({
+        Title = "Tora Is Me Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/EvadeEvent"))
+        end
+    })
+    
+    Tabs.Evade:AddButton({
+        Title = "Aurora Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/cocotv666/Aurora/main/Aurora_Loader"))()
+        end
+    })
+    
+    Tabs.Evade:AddButton({
+        Title = ".xyz hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/xdevslasher/xyz.evade/main/xyz.evade.lua",true))() 
+        end
+    })
+    
+    Tabs.Evade:AddButton({
+        Title = "Moon Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/V3rmz/LemonadeHub/main/Mobile"))()
+        end
+    })
+    
+    Tabs.Evade:AddButton({
+        Title = "Tbao Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubEvade'))()
+        end
+    })
+----------------------------------------Jail----------------------------------------
+print("loading jailbreak script")
+wait(.1)
+Tabs.Jail:AddButton({
+        Title = "BlitzItKing's Hub",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/BlitzIsKing/UniversalFarm/main/Loader/Regular"))()
+        end
+    })
+    
+    Tabs.Jail:AddButton({
+        Title = "Vynixius",
+        Description = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Teleport%20Tool/Source.lua"))()
+        end
+    })
+    
+ Tabs.If:AddParagraph({
+        Title = "Lonely Hub",
+        Content = "Tìm script lâu quá nên skip"
+    })
+----------------------------------------HOP----------------------------------------
+ print("loading HOP Script")
+ wait(.1)
+ Tabs.HOP:AddButton({
+        Title = "Lion Hub",
+        Description = "Auto Tyrant",
+        Callback = function()
+getgenv().Mode = "TOTS" -- rip_indra, Dough King, Pull Lever, TOTS, Darkbeard
+getgenv().Team = "Marines"
+repeat task.wait() until game:IsLoaded() and game:GetService("Players") and game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/f0952c4a5f3db9e01f4dbd099c1f9b3c.lua"))()
+        end
+    }) 
+    
+    Tabs.HOP:AddButton({
+        Title = "Lion Hub",
+        Description = "Hop Indra",
+        Callback = function()
+            getgenv().Mode = "rip_indra" -- rip_indra, Dough King, Pull Lever, TOTS, Darkbeard
+getgenv().Team = "Marines"
+repeat task.wait() until game:IsLoaded() and game:GetService("Players") and game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/f0952c4a5f3db9e01f4dbd099c1f9b3c.lua"))()
+        end
+    })
+    
+    Tabs.HOP:AddButton({
+        Title = "Lion Hub",
+        Description = "Dough King",
+        Callback = function()
+            getgenv().Mode = "Dough King" -- rip_indra, Dough King, Pull Lever, TOTS, Darkbeard
+getgenv().Team = "Marines"
+repeat task.wait() until game:IsLoaded() and game:GetService("Players") and game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/f0952c4a5f3db9e01f4dbd099c1f9b3c.lua"))()
+        end
+    })
+    
+    Tabs.HOP:AddButton({
+        Title = "Lion Hub",
+        Description = "Pull Lever",
+        Callback = function()
+            getgenv().Mode = "Pull Lever" -- rip_indra, Dough King, Pull Lever, TOTS, Darkbeard
+getgenv().Team = "Marines"
+repeat task.wait() until game:IsLoaded() and game:GetService("Players") and game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/f0952c4a5f3db9e01f4dbd099c1f9b3c.lua"))()
+        end
+    })
+    
+    Tabs.HOP:AddButton({
+        Title = "Lion Hub",
+        Description = "Darkbeard",
+        Callback = function()
+            getgenv().Mode = "Darkbeard" -- rip_indra, Dough King, Pull Lever, TOTS, Darkbeard
+getgenv().Team = "Marines"
+repeat task.wait() until game:IsLoaded() and game:GetService("Players") and game.Players.LocalPlayer and game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/f0952c4a5f3db9e01f4dbd099c1f9b3c.lua"))()
+        end
+    })
+    
+    Tabs.HOP:AddButton({
+        Title = "Auto Tyrant",
+        Description = "",
+        Callback = function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/skibidip1/Hack/refs/heads/main/Tyrant%20of%20the%20Skies"))()    
+        end
+    })
+----------------------------------------Bounty----------------------------------------
+    print("Loading Bounty Script")
+    wait(.1)
+    Tabs.Bounty:AddButton({
+        Title = "Lion Hub",
+        Description = "",
+        Callback = function()
+            repeat wait() until game:IsLoaded() and game.Players.LocalPlayer
+getgenv().Team = "Pirates"
+getgenv().Config = {
+    ["Safe Health"] = {50},
+    ["Custom Y Run"] = {
+        Enabled = true,
+        ["Y Run"] = 5000
+    },
+    ["Hunt Method"] = {
+        ["Use Move Predict"] = false,
+        ["Hit and Run"] = false,
+        ["Aimbot"] = true,
+        ["ESP Player"] = true,
+        ["Max Attack Time"] = 60
+    },
+    ["Shop"] = {
+        ["Random Fruit"] = false,
+        ["Store Fruit"] = true,
+        ["Zoro Sword"] = false
+    }, 
+    ["Ui Theme"] = {
+        ["Background"] = "139756291389843",
+        ["Skip Button"] = "113079599736013",
+        ["Reset Bounty Button"] = "118191900561814"
+    },
+    ["Setting"] = {
+        ["World"] = nil,
+        ["White Screen"] = false,
+        ["Invisible"] = true,
+        ["Fast Delay"] = 0.7, 
+        ["Tween Speed"] = 350,
+        ["Set Player Server Hop"] = 1,
+        ["Url"] = "Your_Webhook_Url",
+        ["Chat"] = {
+            Enabled = true,
+            Wait = 350,
+            Massage = {"Fan YT Nghiarobloxtt"}
+        }
+    },
+    ["Skip"] = {
+        ["Avoid V4"] = false
+    },
+    ["Spam All Skill On V4"] = {
+        Enabled = true,
+        ["Weapons"] = {"Melee", "Sword", "Gun", "Blox Fruit"}
+    },
+    Items = {
+        Use = {"Melee", "Sword", "Blox Fruit"},
+        Melee = {
+            Enable = true,
+            Delay = 0.4,
+            Skills = {
+                Z = {Enable = true, HoldTime = 0.3},
+                X = {Enable = true, HoldTime = 0.2},
+                C = {Enable = true, HoldTime = 0.5}
+            }
+        },
+        Sword = {
+            Enable = true,
+            Delay = 0.5,
+            Skills = {
+                Z = {Enable = true, HoldTime = 1},
+                X = {Enable = true, HoldTime = 0}
+            }
+        },
+        Gun = {
+            Enable = false,
+            Delay = 0.2,
+            Skills = {
+                Z = {Enable = false, HoldTime = 0.1},
+                X = {Enable = false, HoldTime = 0.1}
+            }
+        },
+        ["Blox Fruit"] = {
+            Enable = true,
+            Delay = 0.4,
+            Skills = {
+                Z = {Enable = true, HoldTime = 0.1},
+                X = {Enable = true, HoldTime = 0.1},
+                C = {Enable = true, HoldTime = 0.15},
+                V = {Enable = true, HoldTime = 0.2},
+                F = {Enable = false, HoldTime = 0.1}
+            }
+        }
+    }
+}
+loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/10f7f97cebba24a87808c36ebd345a97.lua"))()
+        end
+    })
+    
+    Tabs.Bounty:AddButton({
+        Title = "Vexeze Hub",
+        Description = "",
+        Callback = function()
+            getgenv().Config = {
+
+ ["Performance"] = {
+
+["Enabled"] = false, ---- true
+
+["Transparency"] = {
+
+["All Objects"] = true, --- No Editing
+
+["NilInstances"] = true, --- No Editing
+
+["DescendantAdded"] = true --- No Editing
+
+},
+
+ ["Graphics"] = {
+
+["Water"] = {
+
+["WaveSize"] = 0,
+
+["WaveSpeed"] = 0,
+
+["Reflectance"] = 0,
+
+["Transparency"] = 0
+
+}, --- No Editing
+
+ ["Lighting"] = {
+
+["GlobalShadows"] = false, --- true
+
+["FogEnd"] = 9e9, --- No Editing
+
+["Brightness"] = 0 --- No Editing
+
+},
+
+["QualityLevel"] = "Level01",
+
+["DisableEffects"] = true --- No Editing
+
+},
+
+ ["ObjectProperties"] = {
+
+["Material"] = "Plastic",
+
+["Reflectance"] = 0, --- No Editing
+
+["RemoveDecals"] = true, --- No Editing
+
+["CustomTexture"] = 10385902758728957 } --- No Editing
+
+},
+
+ ["Team"] = "Pirates",
+
+ ["Safe Health"] = {40, 50},--- 60 - 70
+
+ ["Skip"] = { 
+
+ ["Fruit"] = {["Enabled"] = true, --- false
+
+ ["Avoid Fruit"] = {
+
+ "Portal-Portal", 
+
+ "Kitsune-Kitsune"
+
+ }
+
+ },
+
+ ["Avoid V4"] = true --- false
+
+ },
+
+ ["Hunt Method"] = {
+
+ ["Use Move Predict"] = true, --- false
+
+ ["Hit and Run"] = true
+
+ }, --- false
+
+ ["Spam All Skill On V4"] = {
+
+ ["Enabled"] = true, --- false
+
+ ["Weapons"] = {"Melee", "Gun", "Sword", "Blox Fruit"}
+
+ },
+
+ ["Chat"] = {
+
+ ["Enabled"] = true, --- false
+
+ ["Message"] = {"Vxeze Hub Auto Bounty"}
+
+ },
+
+ ["Custom Y Run"] = {
+
+ ["Enabled"] = true, --- false
+
+ ["Y Run"] = 5000 --- <5000
+
+ },
+
+ ["Misc"] = {
+
+ ["Auto Store Fruit"] = true,
+
+ ["Auto Random Fruit"] = true,
+
+ ["White Screen"] = false, --- true
+
+ ["Click Delay"] = 0.01,
+
+ },
+
+ ["Items"] = {["Use"] = {"Melee", "Gun", "Sword"},
+
+ ["Melee"] = {
+
+ ["Enable"] = true,
+
+ ["Skills"] = {
+
+ ["Z"] = {["Enable"] = true, ["HoldTime"] = 1.5},
+
+ ["X"] = {["Enable"] = true, ["HoldTime"] = 0.1},
+
+ ["C"] = {["Enable"] = true, ["HoldTime"] = 0.1}
+
+ }
+
+ },
+
+ ["Blox Fruit"] = {
+
+ ["Enable"] = true,
+
+ ["Skills"] = {
+
+ ["Z"] = {["Enable"] = true, ["HoldTime"] = 0.1},
+
+ ["X"] = {["Enable"] = true, ["HoldTime"] = 0.1},
+
+ ["C"] = {["Enable"] = true, ["HoldTime"] = 0.1},
+
+ ["V"] = {["Enable"] = false, ["HoldTime"] = 0.1},
+
+ ["F"] = {["Enable"] = true, ["HoldTime"] = 0.1}
+
+ }
+
+ },
+
+ ["Sword"] = {
+
+ ["Enable"] = true,
+
+ ["Skills"] = {
+
+ ["Z"] = {["Enable"] = true, ["HoldTime"] = 0.1},
+
+ ["X"] = {["Enable"] = true, ["HoldTime"] = 0.1}
+
+ } 
+
+ },
+
+ ["Gun"] = {
+
+ ["Enable"] = true, 
+
+ ["Skills"] = {
+
+ ["Z"] = {["Enable"] = true, ["HoldTime"] = 0.1},
+
+ ["X"] = {["Enable"] = true, ["HoldTime"] = 0.1}
+
+ } 
+
+ }
+
+ }
+
+}
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Dex-Bear/Vxezehub/refs/heads/main/VxezeHubAutoBounty"))()
+        end
+    })
+    
+    Tabs.Bounty:AddButton({
+        Title = "Hoho Hub",
+        Description = "",
+        Callback = function()
+script_key = "put_your_key_here";
+
+_G["HoHo Hub Auto Bounty V4"] = {
+    ["Avatar"] = "rbxassetid://8598068647",
+    ["Farm Method"] = "Normal", -- Normal or Gun (really Bad rn)
+    ["Select Team"] = "Pirate", -- Pirate/Marine
+    ["Discord Webhook"] = "",
+    ["Bypass Teleport"] = false, -- not recommend cuz the bypass success rate is low
+    ["Max Level Distance"] = 612, -- 612 is took from wiki but u can change it
+    ["Don't attack friends"] = true,
+    ["Don't attack player have cup"] = false,
+    ["Distance Attack Y"] = 2, -- Shark Race = 0; Another >= 6
+    ["Chat After Kill"] = {
+        ["Active"] = true, -- if u don't want script chat just make it false
+        ["List Chat"] = {"i have a good gaming chair","No skill? Use Hoho hub","How to play this game","im new","your bad"},
+    },
+    ["Yourself"] = {
+        ["Invisible From Ken"] = true,
+        ["No Stun"] = true,
+    },
+    ["SafeZone"] = {Enabled = true, ["Health Left (%)"] = 25, ["Wait Until Heal (%)"] = 80},
+    ["Time Control"] = {
+        ["Max Time Target Player"] = 120,
+    },
+    ["Abilities"] = {
+        ["Auto Click"] = true,
+        ["Melee"] = {
+            Z = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            X = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            C = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+        },
+        ["Sword"] = {
+            Z = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            X = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+        },
+        ["Gun"] = {
+            Z = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            X = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+        },
+        ["Fruit"] = {
+            Z = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            X = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            C = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+            V = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6}, -- don't forget to disable V if u r using zoan fruits
+            F = {Enabled = true, Hold = 0.05, WaitNextSkill = 0.6},
+        },
+    },
+}
+_G.SupperFixLag = true -- eww potato device
+_G["Auto Gacha & Store Fruit"] = true -- more fruits ^^
+_G.UsePortalTeleport = true
+
+_G.loadCustomId = "fac6dbd013c78163f8061ce11b2c1330"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI"))()
+        end
+    })
+    
+----------------------------------------Kaitun----------------------------------------
+print("loading Kaitun Script")
+wait(.1)
+Tabs.Kaitun:AddButton({
+        Title = "Royx Hub",
+        Description = "",
+        Callback = function()
+            getgenv().ConfigsKaitun = {
+
+	["Safe Mode"] = false, -- Will be pass all anti cheat (but slow farm)
+
+	
+
+	["Melee"] = {
+
+		["Death Step"] = true,
+
+		["Electric Claw"] = true,
+
+		["Dragon Talon"] = true,
+
+		["Sharkman Karate"] = true,
+
+		["Superhuman"] = true,
+
+		["God Human"] = true,
+
+	},
+
+
+
+	["Sword"] = {
+
+		-- : World 1
+
+		["Saber"] = true,
+
+		["Pole"] = true,
+
+		-- : World 2
+
+		["Midnight Blade"] = false,
+
+		["Shisui"] = false,
+
+		["Saddi"] = false,
+
+		["Wando"] = false,
+
+		["Rengoku"] = true,
+
+		["True Triple Katana"] = false,
+
+		-- : World 3
+
+		["Yama"] = true,
+
+		["Tushita"] = true,
+
+		["Canvander"] = true,
+
+		["Buddy Sword"] = true,
+
+		["Twin Hooks"] = true,
+
+		["Hallow Scythe"] = true,
+
+		["Cursed Dual Katana"] = true,
+
+	},
+
+
+
+	["Gun"] = {
+
+		-- : World 2
+
+		["Kabucha"] = false,
+
+		-- : World 3
+
+		["Venom Bow"] = true,
+
+		["Skull Guitar"] = true,
+
+	},
+
+
+
+	["Mastery"] = {
+
+		["Melee"] = true,
+
+		["Sword"] = true,
+
+		["Devil Fruits"] = false,
+
+
+
+		["Configs"] = {
+
+			["Selected All Sword"] = true,
+
+			["Select Sword"] = {"Cursed Dual Katana"},
+
+		}
+
+	},
+
+
+
+	["Race"] = {
+
+		["v2"] = true,
+
+		["v3"] = true,
+
+		["Locked"] = {
+
+			["Mink"] = true,
+
+			["Human"] = true,
+
+			["Skypiea"] = true,
+
+			["Fishman"] = false,
+
+		},
+
+	},
+
+
+
+	["Fruit"] = {
+
+		["Main Fruit"] = {"Dragon-Dragon"},
+
+		["Sec Fruit"] = {"Dragon-Dragon"},
+
+		["Safe Fruit"] = {
+
+			"Dough-Dough",
+
+			"Dragon-Dragon"
+
+		},
+
+	},
+
+
+
+	["Quest"] = {
+
+		["Rainbow Haki"] = true,
+
+		["Pull Lever"] = true,
+
+		["Musketeer Hat"] = true,
+
+		["Dough Mirror"] = true,
+
+		["Shark Anchor"] = {
+
+			["Enable"] = false,
+
+			["Money"] = 25_000_000,
+
+		},
+
+	},
+
+
+
+	["Currency"] = {
+
+		["Lock Fragment"] = 25_000,
+
+	},
+
+
+
+	["Performance"] = {
+
+		["White Screen"] = false,
+
+		["Booster FPS"] = true,
+
+		["Lock FPS"] = 2400,
+
+		["AFK Timeout"] = 150,
+
+	},
+
+}
+
+loadstring(game:HttpGet("https://api.realaya.xyz/v1/files/l/73mkp0aqyfo4ypy8hvl0nz10lq49fey5.lua"))()
+        end
+    })
+    
+    Tabs.Kaitun:AddButton({
+        Title = "Mukuro Hub",
+        Description = "",
+        Callback = function()
+            getgenv().Mode = "OneClick"
+
+getgenv().Setting = {
+
+    ["Team"] = "Marines", -- Options "Pirates", "Marines"
+
+    ["FucusOnLevel"] = true,
+
+    ["Fruits"] = {  -- setting for fruits u want
+
+        ["Primary"] = { -- if current fruit is not in this list, eat/buy
+
+            "Dragon-Dragon",
+
+            -- u can configs add mores/remove and must end with , (comma symbol)
+
+        },
+
+        ["Normal"] = { -- it just a normal fruit list
+
+            "Dragon-Dragon",
+
+            -- u can configs add mores/remove and must end with , (comma symbol)
+
+        }
+
+        -- run this for get all fruit name `local t={};for _,v in pairs(game.ReplicatedStorage.Remotes.CommF_:InvokeServer("GetFruits"))do table.insert(t,`"{v.Name}"`)end;setclipboard(table.concat(t, "\n"))`
+
+    },
+
+    ["IdleCheck"] = 150, -- every (x) seconds if not moving rejoin
+
+};
+
+
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Loader.lua"))()
+        end
+    })
+----------------------------------------Info----------------------------------------
+wait(.5)
+print("Loading Info Tab")
+wait(.1)
+Tabs.If:AddSection("Info")
+Tabs.If:AddParagraph({
+        Title = "Lonely Hub",
+        Content = "Thank "..game.Players.LocalPlayer.Name.." for use script!"
+    })
+    
+    Tabs.Info:AddParagraph({
+        Title="Your Executor",
+        Content=executorName
+    })
+    
+    Tabs.If:AddParagraph({
+        Title = "Script Developer",
+        Content = "Script Make By\nMeiMei and LongHip12"
+    })
+
+    Tabs.If:AddParagraph({
+        Title = "MeiMei",
+        Content = "Script Developer"
+    })
+    
+    Tabs.If:AddParagraph({
+        Title = "LongHip12",
+        Content = "Owner and \n Script Developer"
+    })
+    
+    Tabs.If:AddButton({
+        Title = "My bio",
+        Description = "My bio here",
+        Callback = function()
+            setclipboard("https://linkbio.co/LongHip12")
+        end
+    })
+    wait(.1)
+----------------------------------------Settings----------------------------------------
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+-- Ignore keys that are used by ThemeManager.
+-- (we dont want configs to save themes, do we?)
+SaveManager:IgnoreThemeSettings()
+
+-- You can add indexes of elements the save manager should ignore
+SaveManager:SetIgnoreIndexes({})
+
+-- use case for doing it this way:
+-- a script hub could have themes in a global folder
+-- and game configs in a separate folder per game
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+
+Window:SelectTab(30)
+
+-- You can use the SaveManager:LoadAutoloadConfig() to load a config
+-- which has been marked to be one that auto loads!
+SaveManager:LoadAutoloadConfig()
+
+-- Tạo GUI FPS Counter
+local FPSCOUNTER = Instance.new("ScreenGui")
+FPSCOUNTER.Name = "FPSCOUNTER"
+FPSCOUNTER.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+FPSCOUNTER.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+FPSCOUNTER.Enabled = false -- Mặc định ẩn
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = FPSCOUNTER
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.Position = UDim2.new(0.89, 0, 0.01, 0)
+TextLabel.Size = UDim2.new(0, 79, 0, 47)
+TextLabel.Font = Enum.Font.FredokaOne
+TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.TextScaled = true
+TextLabel.TextWrapped = true
+
+-- Tính FPS
+local runService = game:GetService("RunService")
+local goodFPS = 45
+local okFPS = 30
+
+runService.RenderStepped:Connect(function()
+	local CurrentFPS = workspace:GetRealPhysicsFPS()
+	TextLabel.Text = "FPS: " .. math.floor(CurrentFPS)
+
+	if CurrentFPS >= goodFPS then
+		TextLabel.TextColor3 = Color3.new(0, 1, 0)
+	elseif CurrentFPS >= okFPS then
+		TextLabel.TextColor3 = Color3.new(1, 0.666667, 0)
+	else
+		TextLabel.TextColor3 = Color3.new(1, 0, 0)
+	end
+end)
+
+Tabs.Settings:AddToggle("FPSCOUNTER", {
+    Title = "FPS Counter",
+    Default = false,
+    Callback = function(state)
+        local gui = game.Players.LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("FPSCOUNTER")
+        if gui then
+            gui.Enabled = state
+        end
+    end
+})
+
+
+----------------------------------------LoadedNotify----------------------------------------
+    game.StarterGui:SetCore("SendNotification", {
+     Title = "Lonely Hub";
+     Text = "Loaded!";
+     Icon = "";
+     Duration = "2";
+})
+wait(.1) 
+print("Loaded!")
+
+Tabs.Fruit:AddParagraph({
+        Title = "Find Fruit",
+        Content = "Use Redz Hub For Best Experience!"
+    })
+    
+    Tabs.Chest:AddParagraph({
+        Title = "Auto Chest",
+        Content = "Use Redz Hub For Best Experience!"
+    })
+
+else
+     game.Players.LocalPlayer:Kick("Invalid Key!Please enter your correct key!")
+end
